@@ -1,0 +1,16 @@
+[package]
+name = "biff"
+version = "0.1.4"
+authors = ["Wizz Berry <wisbery@users.noreply.github.com>"]
+description = "Byte by byte file comarator"
+documentation = "https://docs.rs/biff"
+repository = "https://github.com/wisbery/biff.git"
+keywords = ["binary", "text", "files", "compare", "comparator"]
+categories = ["command-line-utilities"]
+license = "MIT OR Apache-2.0"
+edition = "2021"
+
+[dependencies]
+clap = { version = "4.4.6", features = ["cargo"] }
+hex = "0.4.3"
+once_cell = "1.18.0"
