@@ -4,10 +4,6 @@ Notable changes to **biff** project are documented in this file.
 This format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
-
-- [Issue #7](https://github.com/wisbery/biff/issues/7) Percent formatting
-
 ## [v0.1.3] - 2023-04-20
 
 ### Changed

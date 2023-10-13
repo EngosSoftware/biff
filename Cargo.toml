@@ -1,7 +1,7 @@
 [package]
 name = "biff"
-version = "0.1.4"
-authors = ["Wizz Berry <wisbery@users.noreply.github.com>"]
+version = "0.1.5"
+authors = ["Dariusz Depta <wisbery@users.noreply.github.com>"]
 description = "Byte by byte file comarator"
 documentation = "https://docs.rs/biff"
 repository = "https://github.com/wisbery/biff.git"
