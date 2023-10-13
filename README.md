@@ -50,13 +50,13 @@ $ cargo install biff
 
 ## Usage
 
-Display short description of **biff**'s options:
+Display short description of **biff** options:
 
 ```
 $ biff -h
 ```
 
-Display detailed description of **biff**'s options:
+Display detailed description of **biff** options:
 
 ```
 $ biff --help

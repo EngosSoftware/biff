@@ -1,6 +1,6 @@
 [package]
 name = "biff"
-version = "0.1.5"
+version = "0.1.6"
 authors = ["Dariusz Depta <wisbery@users.noreply.github.com>"]
 description = "Byte by byte file comarator"
 documentation = "https://docs.rs/biff"
