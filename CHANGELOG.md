@@ -1,8 +1,10 @@
 # Changelog
-Notable changes to **biff** project are documented in this file.
 
-This format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+## [v0.1.7] - 2024-11-08
+
+### Changed
+- Upgraded dependencies.
+- Fixed broken links.
 
 ## [v0.1.3] - 2023-04-20
 

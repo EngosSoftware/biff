@@ -7,19 +7,25 @@
 ![build MacOs][build-badge-macos]
 [![MIT licensed][mit-badge]][mit-url]
 [![Apache 2.0 licensed][apache-badge]][apache-url]
-[![Contributor Covenant][coc-badge]](https://github.com/wisbery/biff/blob/main/CODE_OF_CONDUCT.md)
+[![Contributor Covenant][cc-badge]][cc-url]
 
 [crates-badge]: https://img.shields.io/crates/v/biff.svg
 [crates-url]: https://crates.io/crates/biff
 [mit-badge]: https://img.shields.io/badge/License-MIT-blue.svg
-[mit-url]: https://github.com/wisbery/biff/blob/main/LICENSE-MIT
+[mit-url]: https://github.com/EngosSoftware/biff/blob/main/LICENSE-MIT
+[mit-license-url]: https://github.com/EngosSoftware/biff/blob/main/LICENSE-MIT
 [apache-badge]: https://img.shields.io/badge/License-Apache%202.0-blue.svg
-[apache-url]: https://github.com/wisbery/biff/blob/main/LICENSE-APACHE
-[build-badge-linux]: https://github.com/wisbery/biff/actions/workflows/build-linux.yml/badge.svg
-[build-badge-windows]: https://github.com/wisbery/biff/actions/workflows/build-windows.yml/badge.svg
-[build-badge-macos]: https://github.com/wisbery/biff/actions/workflows/build-macos.yml/badge.svg
+[apache-url]: https://github.com/EngosSoftware/biff/blob/main/LICENSE-APACHE
+[apache-license-url]: https://github.com/EngosSoftware/biff/blob/main/LICENSE
+[apache-notice-url]: https://github.com/EngosSoftware/biff/blob/main/NOTICE
+[build-badge-linux]: https://github.com/EngosSoftware/biff/actions/workflows/build-linux.yml/badge.svg
+[build-badge-windows]: https://github.com/EngosSoftware/biff/actions/workflows/build-windows.yml/badge.svg
+[build-badge-macos]: https://github.com/EngosSoftware/biff/actions/workflows/build-macos.yml/badge.svg
 [coverage-badge]: https://img.shields.io/badge/Code%20coverage-100%25-green.svg
-[coc-badge]: https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg
+[cc-badge]: https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg
+[cc-url]: https://github.com/EngosSoftware/biff/blob/main/CODE_OF_CONDUCT.md
+
+[biff]: https://github.com/EngosSoftware/biff
 
 ## Overview
 
@@ -164,12 +170,13 @@ $ echo $?
 
 Licensed under either of
 
-- [MIT license](https://opensource.org/licenses/MIT) ([LICENSE-MIT](https://github.com/wisbery/biff/blob/main/LICENSE-MIT)), or
-- [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0) ([LICENSE-APACHE](https://github.com/wisbery/biff/blob/main/LICENSE-APACHE))
+- [MIT license][mit-url] (see [LICENSE-MIT][mit-license-url]) or
+- [Apache License, Version 2.0][apache-url] (see [LICENSE][apache-license-url] and [NOTICE][apache-notice-url])
 
 at your option.
 
 ## Contribution
 
+Any contributions to **[biff]** are greatly appreciated.
 All contributions intentionally submitted for inclusion in the work by you,
 shall be dual licensed as above, without any additional terms or conditions.

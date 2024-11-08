@@ -50,12 +50,12 @@ tasks:
       - cmd: cargo +nightly fmt
 
   help:
-    desc: Runs htop help option
+    desc: Runs short help option
     cmds:
       - cmd: cargo run -- -h
 
   help-long:
-    desc: Runs htop help option
+    desc: Runs long help option
     cmds:
       - cmd: cargo run -- --help
 
