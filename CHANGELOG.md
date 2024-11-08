@@ -1,5 +1,10 @@
 # Changelog
 
+## [v0.1.8] - 2024-11-08
+
+### Changed
+- Fixed typo.
+
 ## [v0.1.7] - 2024-11-08
 
 ### Changed
