@@ -2,7 +2,7 @@
 name = "biff"
 version = "0.1.7"
 authors = ["Dariusz Depta <depta@engos.de>"]
-description = "Byte by byte file comarator"
+description = "Byte by byte file comparator"
 documentation = "https://docs.rs/biff"
 repository = "https://github.com/EngosSoftware/biff.git"
 keywords = ["binary", "text", "files", "compare", "comparator"]
