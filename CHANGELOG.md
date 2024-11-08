@@ -41,4 +41,4 @@
     ```
     differences within the limit <limit>: <diff>
     ```
-  - after change: - (no message)
+  - after change: no message
