@@ -4,45 +4,38 @@ silent: true
 
 tasks:
 
-  bbt:
-    desc: Runs black-box tests
-    cmds:
-      - cmd: cargo build && cd bbt && ./run-bbt.sh && cd ..
-
   build:
     desc: Builds in debug mode
     cmds:
-      - cmd: cargo build
+      - cmd: cargo +stable build
 
   clean:
     desc: Cleans all targets
     cmds:
       - cmd: cargo clean
 
-  cov:
-    desc: Runs code coverage using grcov
+  clippy:
+    desc: Runs clippy for all targets
     cmds:
-      - cmd: ./coverage.sh
+      - cmd: cargo +stable clippy --all-targets
+
+  cov:
+    desc: Generates code coverage report
+    cmds:
+      - cmd: cargo +stable llvm-cov clean
+      - cmd: cargo +stable llvm-cov --no-cfg-coverage
+      - cmd: cargo +stable llvm-cov report --html
+      - cmd: echo -e "\n\e[1;32mOpen coverage report\x3A\e[0m file:///$(pwd)/target/llvm-cov/html/index.html\n"
 
   doc:
     desc: Generates documentation
     cmds:
-      - cmd: cargo doc --no-deps
+      - cmd: cargo +stable doc --no-deps
 
   doc-open:
     desc: Generates documentation and opens it in browser
     cmds:
-      - cmd: cargo doc --no-deps --open
-
-  test:
-    desc: Runs tests in debug mode
-    cmds:
-      - cmd: cargo test
-
-  clippy:
-    desc: Runs clippy for all targets
-    cmds:
-      - cmd: cargo clippy --all-targets
+      - cmd: cargo +stable doc --no-deps --open
 
   fmt:
     desc: Runs code formatter
@@ -52,14 +45,24 @@ tasks:
   help:
     desc: Runs short help option
     cmds:
-      - cmd: cargo run -- -h
+      - cmd: cargo +stable run -- -h
 
   help-long:
     desc: Runs long help option
     cmds:
-      - cmd: cargo run -- --help
+      - cmd: cargo +stable run -- --help
 
   install:
     desc: Builds and installs release version
     cmds:
       - cmd: cargo +stable install biff --path=. --force
+
+  test:
+    desc: Runs tests in debug mode
+    cmds:
+      - cmd: cargo +stable test
+
+  testn:
+    desc: Runs tests in debug mode
+    cmds:
+      - cmd: cargo +stable nextest run

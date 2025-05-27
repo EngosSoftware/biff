@@ -1,4 +1,0 @@
-Unexpected: Some(Err(Os { code: 5, kind: Uncategorized, message: "Input/output error" })), Some(Ok(76))
-2
-Unexpected: Some(Ok(76)), Some(Err(Os { code: 5, kind: Uncategorized, message: "Input/output error" }))
-2

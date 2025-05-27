@@ -219,19 +219,15 @@ pub fn get_flag(matches: &ArgMatches, id: &str) -> bool {
 /// Returns matched skip bytes from command-line arguments.
 pub fn get_skip(matches: &ArgMatches, id: &str) -> (usize, usize) {
   if let Some(s) = matches.get_one::<String>(id) {
-    if s.contains(':') {
+    return if s.contains(':') {
       let mut parts = s.split(':');
-      if let Some(part_1) = parts.next() {
-        if let Some(part_2) = parts.next() {
-          let skip_1 = parse_bytes(part_1, 0);
-          let skip_2 = parse_bytes(part_2, 0);
-          return (skip_1, skip_2);
-        }
-      }
+      let skip_1 = parse_bytes(parts.next().unwrap(), 0);
+      let skip_2 = parse_bytes(parts.next().unwrap(), 0);
+      (skip_1, skip_2)
     } else {
       let skip = parse_bytes(s, 0);
-      return (skip, skip);
-    }
+      (skip, skip)
+    };
   }
   (0, 0)
 }
@@ -310,26 +306,4 @@ fn multiplied(s: &str, multiplier: usize) -> Option<usize> {
     }
   }
   None
-}
-
-#[cfg(test)]
-mod tests {
-  use super::*;
-
-  #[test]
-  fn test_parse_bytes() {
-    assert_eq!(0, parse_bytes("not_a_number", 0));
-    assert_eq!(1, parse_bytes("a2kB", 1));
-    assert_eq!(123, parse_bytes("123", 0));
-    assert_eq!(2_000, parse_bytes("2kB", 0));
-    assert_eq!(2_048, parse_bytes("2k", 0));
-    assert_eq!(2_048, parse_bytes("2K", 0));
-    assert_eq!(2_048, parse_bytes("2KiB", 0));
-    assert_eq!(2_000_000, parse_bytes("2MB", 0));
-    assert_eq!(2_097_152, parse_bytes("2M", 0));
-    assert_eq!(2_097_152, parse_bytes("2MiB", 0));
-    assert_eq!(2_000_000_000, parse_bytes("2GB", 0));
-    assert_eq!(2_147_483_648, parse_bytes("2G", 0));
-    assert_eq!(2_147_483_648, parse_bytes("2GiB", 0));
-  }
 }

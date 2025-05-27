@@ -8,6 +8,7 @@
 [![MIT licensed][mit-badge]][mit-url]
 [![Apache 2.0 licensed][apache-badge]][apache-url]
 [![Contributor Covenant][cc-badge]][cc-url]
+[![Made by Human][mbh-badge]][cc-url]
 
 [crates-badge]: https://img.shields.io/crates/v/biff.svg
 [crates-url]: https://crates.io/crates/biff
@@ -24,6 +25,7 @@
 [coverage-badge]: https://img.shields.io/badge/Code%20coverage-100%25-green.svg
 [cc-badge]: https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg
 [cc-url]: https://github.com/EngosSoftware/biff/blob/main/CODE_OF_CONDUCT.md
+[mbh-badge]: https://img.shields.io/badge/Made_by-HUMAN-d35400.svg
 [repository-url]: https://github.com/EngosSoftware/biff
 
 ## Overview
@@ -179,3 +181,7 @@ at your option.
 Any contributions to [**biff**][repository-url] are greatly appreciated.
 All contributions intentionally submitted for inclusion in the work by you,
 shall be dual licensed as above, without any additional terms or conditions.
+
+---
+
+Brought to you with 💙 by [Engos Software](https://engos.de)

@@ -1,6 +1,6 @@
 [package]
 name = "biff"
-version = "0.1.9"
+version = "0.1.10"
 authors = ["Dariusz Depta <depta@engos.de>"]
 description = "Byte by byte file comparator"
 documentation = "https://docs.rs/biff"
@@ -9,8 +9,17 @@ keywords = ["binary", "text", "files", "compare", "comparator"]
 categories = ["command-line-utilities"]
 license = "MIT OR Apache-2.0"
 edition = "2021"
+exclude = [
+    "rustfmt.toml",
+    "Taskfile.yml",
+    ".github/",
+    ".gitignore"
+]
 
 [dependencies]
-clap = { version = "4.5.27", features = ["cargo"] }
+clap = { version = "4.5.38", features = ["cargo"] }
 hex = "0.4.3"
-once_cell = "1.20.2"
+once_cell = "1.21.3"
+
+[dev-dependencies]
+assert_cmd = "2.0.17"
