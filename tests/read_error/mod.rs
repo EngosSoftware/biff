@@ -1,6 +1,7 @@
 use super::*;
 use assert_cmd::Command;
 
+#[cfg(target_os = "linux")]
 #[test]
 fn _0001() {
   let mut cmd = Command::cargo_bin("biff").unwrap();
@@ -14,8 +15,22 @@ fn _0001() {
     .stderr("Unexpected: Os { code: 2, kind: NotFound, message: \"No such file or directory\" }\n");
 }
 
+#[cfg(target_os = "windows")]
 #[test]
 fn _0002() {
+  let mut cmd = Command::cargo_bin("biff").unwrap();
+  cmd
+    .current_dir(current_dir(file!()))
+    .arg("a.txt")
+    .arg("file.txt")
+    .assert()
+    .code(2)
+    .stdout("")
+    .stderr("Unexpected: Os { code: 2, kind: NotFound, message: \"The system cannot find the file specified.\" }\n");
+}
+
+#[test]
+fn _0003() {
   let mut cmd = Command::cargo_bin("biff").unwrap();
   cmd
     .current_dir(current_dir(file!()))
@@ -28,7 +43,7 @@ fn _0002() {
 
 #[cfg(target_os = "linux")]
 #[test]
-fn _0003() {
+fn _0004() {
   let mut cmd = Command::cargo_bin("biff").unwrap();
   cmd
     .current_dir(current_dir(file!()))
@@ -44,7 +59,7 @@ fn _0003() {
 
 #[cfg(target_os = "linux")]
 #[test]
-fn _0004() {
+fn _0005() {
   let mut cmd = Command::cargo_bin("biff").unwrap();
   cmd
     .current_dir(current_dir(file!()))
