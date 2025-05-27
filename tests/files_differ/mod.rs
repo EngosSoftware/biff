@@ -158,6 +158,7 @@ fn _0011() {
     .stderr("");
 }
 
+#[cfg(target_os = "linux")]
 #[test]
 fn _0012() {
   let mut cmd = Command::cargo_bin("biff").unwrap();
@@ -171,8 +172,22 @@ fn _0012() {
     .stderr("");
 }
 
+#[cfg(target_os = "windows")]
 #[test]
 fn _0013() {
+  let mut cmd = Command::cargo_bin("biff").unwrap();
+  cmd
+    .current_dir(current_dir(file!()))
+    .arg("file4.txt")
+    .arg("file5.txt")
+    .assert()
+    .code(1)
+    .stdout("file4.txt file5.txt differ: byte 22, line 2\n")
+    .stderr("");
+}
+
+#[test]
+fn _0014() {
   let mut cmd = Command::cargo_bin("biff").unwrap();
   cmd
     .current_dir(current_dir(file!()))
@@ -185,7 +200,7 @@ fn _0013() {
 }
 
 #[test]
-fn _0014() {
+fn _0015() {
   let mut cmd = Command::cargo_bin("biff").unwrap();
   cmd
     .current_dir(current_dir(file!()))
@@ -200,7 +215,7 @@ fn _0014() {
 }
 
 #[test]
-fn _0015() {
+fn _0016() {
   let mut cmd = Command::cargo_bin("biff").unwrap();
   cmd
     .current_dir(current_dir(file!()))
@@ -215,7 +230,7 @@ fn _0015() {
 }
 
 #[test]
-fn _0016() {
+fn _0017() {
   let mut cmd = Command::cargo_bin("biff").unwrap();
   cmd
     .current_dir(current_dir(file!()))
@@ -230,7 +245,7 @@ fn _0016() {
 }
 
 #[test]
-fn _0017() {
+fn _0018() {
   let mut cmd = Command::cargo_bin("biff").unwrap();
   cmd
     .current_dir(current_dir(file!()))
@@ -245,7 +260,7 @@ fn _0017() {
 }
 
 #[test]
-fn _0018() {
+fn _0019() {
   let mut cmd = Command::cargo_bin("biff").unwrap();
   cmd
     .current_dir(current_dir(file!()))
@@ -260,7 +275,7 @@ fn _0018() {
 }
 
 #[test]
-fn _0019() {
+fn _0020() {
   let mut cmd = Command::cargo_bin("biff").unwrap();
   cmd
     .current_dir(current_dir(file!()))
@@ -275,7 +290,7 @@ fn _0019() {
 }
 
 #[test]
-fn _0020() {
+fn _0021() {
   let mut cmd = Command::cargo_bin("biff").unwrap();
   cmd
     .current_dir(current_dir(file!()))
@@ -289,7 +304,7 @@ fn _0020() {
 }
 
 #[test]
-fn _0021() {
+fn _0022() {
   let mut cmd = Command::cargo_bin("biff").unwrap();
   cmd
     .current_dir(current_dir(file!()))
@@ -303,7 +318,7 @@ fn _0021() {
 }
 
 #[test]
-fn _0022() {
+fn _0023() {
   let mut cmd = Command::cargo_bin("biff").unwrap();
   cmd
     .current_dir(current_dir(file!()))
@@ -317,7 +332,7 @@ fn _0022() {
 }
 
 #[test]
-fn _0023() {
+fn _0024() {
   let mut cmd = Command::cargo_bin("biff").unwrap();
   cmd
     .current_dir(current_dir(file!()))
@@ -331,7 +346,7 @@ fn _0023() {
 }
 
 #[test]
-fn _0024() {
+fn _0025() {
   let mut cmd = Command::cargo_bin("biff").unwrap();
   cmd
     .current_dir(current_dir(file!()))
@@ -345,7 +360,7 @@ fn _0024() {
 }
 
 #[test]
-fn _0025() {
+fn _0026() {
   let mut cmd = Command::cargo_bin("biff").unwrap();
   cmd
     .current_dir(current_dir(file!()))
@@ -359,7 +374,7 @@ fn _0025() {
 }
 
 #[test]
-fn _0026() {
+fn _0027() {
   let mut cmd = Command::cargo_bin("biff").unwrap();
   cmd
     .current_dir(current_dir(file!()))
