@@ -6,6 +6,32 @@ fn _0001() {
   let mut cmd = Command::cargo_bin("biff").unwrap();
   cmd
     .current_dir(current_dir(file!()))
+    .arg("a.txt")
+    .arg("file.txt")
+    .assert()
+    .code(2)
+    .stdout("")
+    .stderr("Unexpected: Os { code: 2, kind: NotFound, message: \"No such file or directory\" }\n");
+}
+
+#[test]
+fn _0002() {
+  let mut cmd = Command::cargo_bin("biff").unwrap();
+  cmd
+    .current_dir(current_dir(file!()))
+    .arg("file.txt")
+    .arg("a.txt")
+    .assert()
+    .code(2)
+    .stderr("Unexpected: Os { code: 2, kind: NotFound, message: \"No such file or directory\" }\n");
+}
+
+#[cfg(target_os = "linux")]
+#[test]
+fn _0003() {
+  let mut cmd = Command::cargo_bin("biff").unwrap();
+  cmd
+    .current_dir(current_dir(file!()))
     .arg("/proc/self/mem")
     .arg("file.txt")
     .assert()
@@ -16,8 +42,9 @@ fn _0001() {
     );
 }
 
+#[cfg(target_os = "linux")]
 #[test]
-fn _0002() {
+fn _0004() {
   let mut cmd = Command::cargo_bin("biff").unwrap();
   cmd
     .current_dir(current_dir(file!()))

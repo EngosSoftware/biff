@@ -106,8 +106,22 @@ fn compare(
   byte_format: &ByteFormat,
 ) -> Option<ComparisonResult> {
   let mut result = ComparisonResult::new();
-  let buf_1 = BufReader::new(File::open(file_name_1).unwrap());
-  let buf_2 = BufReader::new(File::open(file_name_2).unwrap());
+  let file_1 = match File::open(file_name_1) {
+    Ok(file) => file,
+    Err(reason) => {
+      eprintln!("Unexpected: {:?}", reason);
+      return None;
+    }
+  };
+  let file_2 = match File::open(file_name_2) {
+    Ok(file) => file,
+    Err(reason) => {
+      eprintln!("Unexpected: {:?}", reason);
+      return None;
+    }
+  };
+  let buf_1 = BufReader::new(file_1);
+  let buf_2 = BufReader::new(file_2);
   let mut iter_1 = buf_1.bytes().skip(skip_1).take(max_bytes);
   let mut iter_2 = buf_2.bytes().skip(skip_2).take(max_bytes);
   let mut first_difference = false;
