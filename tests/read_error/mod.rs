@@ -29,6 +29,7 @@ fn _0002() {
     .stderr("Unexpected: Os { code: 2, kind: NotFound, message: \"The system cannot find the file specified.\" }\n");
 }
 
+#[cfg(target_os = "linux")]
 #[test]
 fn _0003() {
   let mut cmd = Command::cargo_bin("biff").unwrap();
@@ -41,9 +42,22 @@ fn _0003() {
     .stderr("Unexpected: Os { code: 2, kind: NotFound, message: \"No such file or directory\" }\n");
 }
 
-#[cfg(target_os = "linux")]
+#[cfg(target_os = "windows")]
 #[test]
 fn _0004() {
+  let mut cmd = Command::cargo_bin("biff").unwrap();
+  cmd
+    .current_dir(current_dir(file!()))
+    .arg("file.txt")
+    .arg("a.txt")
+    .assert()
+    .code(2)
+    .stderr("Unexpected: Os { code: 2, kind: NotFound, message: \"The system cannot find the file specified.\" }\n");
+}
+
+#[cfg(target_os = "linux")]
+#[test]
+fn _0005() {
   let mut cmd = Command::cargo_bin("biff").unwrap();
   cmd
     .current_dir(current_dir(file!()))
@@ -59,7 +73,7 @@ fn _0004() {
 
 #[cfg(target_os = "linux")]
 #[test]
-fn _0005() {
+fn _0006() {
   let mut cmd = Command::cargo_bin("biff").unwrap();
   cmd
     .current_dir(current_dir(file!()))
