@@ -47,15 +47,21 @@ pub struct ComparisonOptions {
   pub file_name_2: String,
   pub skip_2: usize,
   pub max_bytes: usize,
-  pub marker_len: usize,
+  pub marker: Vec<u8>,
   pub verbose: bool,
+  pub quiet: bool,
   pub byte_format: ByteFormat,
+  /// Accepted percentage limit of differences between compared files.
+  pub percentage_limit: Option<f64>,
+  /// Accepted absolute limit of differences between compared files.
+  pub absolute_limit: Option<usize>,
+  pub print_bytes: bool,
 }
 
 /// Result details of file comparison.
 #[derive(Debug, Clone)]
 #[non_exhaustive]
-pub struct ComparisonResult {
+pub struct ComparisonDetails {
   /// Total number of different bytes in compared files.
   pub counter: usize,
   /// Size of the files, when files differ in sizes, the bigger file size is returned.
@@ -74,13 +80,13 @@ pub struct ComparisonResult {
   pub first_difference_byte_2: Option<u8>,
 }
 
-impl Default for ComparisonResult {
+impl Default for ComparisonDetails {
   fn default() -> Self {
     Self::new()
   }
 }
 
-impl ComparisonResult {
+impl ComparisonDetails {
   /// Creates new comparison result.
   fn new() -> Self {
     Self {
@@ -96,22 +102,23 @@ impl ComparisonResult {
   }
 }
 
+pub enum ComparisonResult {
+  Identical,
+  Different,
+  InvalidMarker,
+  Error(String),
+}
+
 /// Compares two files.
-pub fn compare(options: &ComparisonOptions) -> Option<ComparisonResult> {
-  let mut result = ComparisonResult::default();
+pub fn compare(options: &ComparisonOptions) -> ComparisonResult {
+  let mut details = ComparisonDetails::default();
   let file_1 = match File::open(&options.file_name_1) {
     Ok(file) => file,
-    Err(reason) => {
-      eprintln!("Unexpected: {:?}", reason);
-      return None;
-    }
+    Err(reason) => return ComparisonResult::Error(format!("Unexpected: {:?}", reason)),
   };
   let file_2 = match File::open(&options.file_name_2) {
     Ok(file) => file,
-    Err(reason) => {
-      eprintln!("Unexpected: {:?}", reason);
-      return None;
-    }
+    Err(reason) => return ComparisonResult::Error(format!("Unexpected: {:?}", reason)),
   };
   let buf_1 = BufReader::new(file_1);
   let buf_2 = BufReader::new(file_2);
@@ -122,53 +129,105 @@ pub fn compare(options: &ComparisonOptions) -> Option<ComparisonResult> {
     match (iter_1.next(), iter_2.next()) {
       (Some(Ok(b1)), Some(Ok(b2))) => {
         if !first_difference && b1 == LF {
-          result.first_difference_line += 1;
+          details.first_difference_line += 1;
         }
-        if result.size < options.marker_len {
-          result.marker_1.push(b1);
-          result.marker_2.push(b2);
+        if details.size < options.marker.len() {
+          details.marker_1.push(b1);
+          details.marker_2.push(b2);
         }
-        result.size += 1;
+        details.size += 1;
         if b1 != b2 {
           if !first_difference {
-            result.first_difference_offset = result.size;
-            result.first_difference_byte_1 = Some(b1);
-            result.first_difference_byte_2 = Some(b2);
+            details.first_difference_offset = details.size;
+            details.first_difference_byte_1 = Some(b1);
+            details.first_difference_byte_2 = Some(b2);
           }
-          print_diff(result.size, Some(b1), Some(b2), options.verbose, options.byte_format);
-          result.counter += 1;
+          print_diff(details.size, Some(b1), Some(b2), options.verbose, options.byte_format);
+          details.counter += 1;
           first_difference = true;
         }
       }
       (None, Some(Ok(b2))) => {
-        result.size += 1;
+        details.size += 1;
         if !first_difference {
-          result.first_difference_offset = result.size;
-          result.first_difference_byte_2 = Some(b2);
+          details.first_difference_offset = details.size;
+          details.first_difference_byte_2 = Some(b2);
         }
-        print_diff(result.size, None, Some(b2), options.verbose, options.byte_format);
-        result.counter += 1;
+        print_diff(details.size, None, Some(b2), options.verbose, options.byte_format);
+        details.counter += 1;
         first_difference = true;
       }
       (Some(Ok(b1)), None) => {
         if !first_difference && b1 == LF {
-          result.first_difference_line += 1;
+          details.first_difference_line += 1;
         }
-        result.size += 1;
+        details.size += 1;
         if !first_difference {
-          result.first_difference_offset = result.size;
-          result.first_difference_byte_1 = Some(b1);
+          details.first_difference_offset = details.size;
+          details.first_difference_byte_1 = Some(b1);
         }
-        print_diff(result.size, Some(b1), None, options.verbose, options.byte_format);
-        result.counter += 1;
+        print_diff(details.size, Some(b1), None, options.verbose, options.byte_format);
+        details.counter += 1;
         first_difference = true;
       }
       (None, None) => break,
-      (v1, v2) => {
-        eprintln!("Unexpected: {:?}, {:?}", v1, v2);
-        return None;
-      }
+      (v1, v2) => return ComparisonResult::Error(format!("Unexpected: {:?}, {:?}", v1, v2)),
     }
   }
-  Some(result)
+  if options.marker != details.marker_1 {
+    if !options.quiet {
+      println!("marker not matched for file: {}", options.file_name_1);
+    }
+    return ComparisonResult::InvalidMarker;
+  }
+  if options.marker != details.marker_2 {
+    if !options.quiet {
+      println!("marker not matched for file: {}", options.file_name_2);
+    }
+    return ComparisonResult::InvalidMarker;
+  }
+  if let Some(limit) = options.percentage_limit {
+    let difference = details.counter as f64 * 100.0 / details.size as f64;
+    return if difference > limit {
+      if !options.quiet {
+        println!(
+          "{} {} differ: limit {}% exceeded by value {:.03}%",
+          options.file_name_1, options.file_name_2, limit, difference
+        );
+      }
+      ComparisonResult::Different
+    } else {
+      ComparisonResult::Identical
+    };
+  }
+  if let Some(limit) = options.absolute_limit {
+    return if details.counter > limit {
+      if !options.quiet {
+        println!(
+          "{} {} differ: limit {} exceeded by value {}",
+          options.file_name_1, options.file_name_2, limit, details.counter
+        );
+      }
+      ComparisonResult::Different
+    } else {
+      ComparisonResult::Identical
+    };
+  }
+  if details.counter > 0 {
+    if !options.verbose && !options.quiet {
+      print!(
+        "{} {} differ: byte {}, line {}",
+        options.file_name_1, options.file_name_2, details.first_difference_offset, details.first_difference_line
+      );
+      if options.print_bytes {
+        print!(" is ");
+        print_byte(details.first_difference_byte_1, options.byte_format);
+        print!(" ");
+        print_byte(details.first_difference_byte_2, options.byte_format);
+      }
+      println!();
+    }
+    return ComparisonResult::Different;
+  }
+  ComparisonResult::Identical
 }
