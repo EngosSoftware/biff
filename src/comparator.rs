@@ -105,6 +105,10 @@ impl ComparisonDetails {
 pub enum ComparisonResult {
   /// Compared files are identical.
   Identical,
+  /// Compared files are similar, differences are under specified percentage limits.
+  SimilarPercentage(f64, f64),
+  /// Compared files are similar, differences are under specified absolute limits.
+  SimilarAbsolute(usize, usize),
   /// Compared files are different.
   Different(ComparisonDetails),
   /// Percentage limit of differences was exceeded,
@@ -203,14 +207,15 @@ pub fn compare(options: &ComparisonOptions) -> ComparisonResult {
     return if difference > limit {
       ComparisonResult::PercentageLimitExceeded(limit, difference)
     } else {
-      ComparisonResult::Identical
+      ComparisonResult::SimilarPercentage(limit, difference)
     };
   }
   if let Some(limit) = options.absolute_limit {
+    let difference = details.counter;
     return if details.counter > limit {
-      ComparisonResult::AbsoluteLimitExceeded(limit, details.counter)
+      ComparisonResult::AbsoluteLimitExceeded(limit, difference)
     } else {
-      ComparisonResult::Identical
+      ComparisonResult::SimilarAbsolute(limit, difference)
     };
   }
   if details.counter > 0 {

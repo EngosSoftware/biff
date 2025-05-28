@@ -56,6 +56,14 @@ fn main() -> ExitCode {
 
   match compare(&options) {
     ComparisonResult::Identical => ExitCode::from(CODE_EQUAL),
+    ComparisonResult::SimilarPercentage(limit, difference) => {
+      let (_, _) = (limit, difference);
+      ExitCode::from(CODE_EQUAL)
+    }
+    ComparisonResult::SimilarAbsolute(limit, difference) => {
+      let (_, _) = (limit, difference);
+      ExitCode::from(CODE_EQUAL)
+    }
     ComparisonResult::AbsoluteLimitExceeded(limit, difference) => {
       if !options.quiet {
         println!(
