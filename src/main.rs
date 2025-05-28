@@ -3,7 +3,6 @@
 //! Byte by byte file comparator.
 
 use crate::cli::{get_bytes, get_flag, get_matches, get_skip, get_str, get_value};
-use once_cell::sync::Lazy;
 use std::fs::File;
 use std::io::{BufReader, Read};
 use std::process::ExitCode;
@@ -17,11 +16,6 @@ pub const CODE_EQUAL: u8 = 0;
 pub const CODE_DIFFERENT: u8 = 1;
 pub const CODE_ERROR: u8 = 2;
 pub const CODE_INVALID_MARKER: u8 = 3;
-
-static EXIT_CODE_EQUAL: Lazy<ExitCode> = Lazy::new(|| ExitCode::from(CODE_EQUAL));
-static EXIT_CODE_DIFFERENT: Lazy<ExitCode> = Lazy::new(|| ExitCode::from(CODE_DIFFERENT));
-static EXIT_CODE_ERROR: Lazy<ExitCode> = Lazy::new(|| ExitCode::from(CODE_ERROR));
-static EXIT_CODE_INVALID_MARKER: Lazy<ExitCode> = Lazy::new(|| ExitCode::from(CODE_INVALID_MARKER));
 
 /// Result details of file comparison.
 struct ComparisonResult {
@@ -215,21 +209,21 @@ fn main() -> ExitCode {
     verbose,
     &byte_format,
   ) else {
-    return *EXIT_CODE_ERROR;
+    return ExitCode::from(CODE_ERROR);
   };
 
   if marker != result.marker_1 {
     if !quiet {
       println!("marker not matched for file: {}", file_name_1);
     }
-    return *EXIT_CODE_INVALID_MARKER;
+    return ExitCode::from(CODE_INVALID_MARKER);
   }
 
   if marker != result.marker_2 {
     if !quiet {
       println!("marker not matched for file: {}", file_name_2);
     }
-    return *EXIT_CODE_INVALID_MARKER;
+    return ExitCode::from(CODE_INVALID_MARKER);
   }
 
   if let Some(limit) = percent_limit {
@@ -241,9 +235,9 @@ fn main() -> ExitCode {
           limit, difference
         );
       }
-      *EXIT_CODE_DIFFERENT
+      ExitCode::from(CODE_DIFFERENT)
     } else {
-      *EXIT_CODE_EQUAL
+      ExitCode::from(CODE_EQUAL)
     };
   }
 
@@ -255,9 +249,9 @@ fn main() -> ExitCode {
           limit, result.counter
         );
       }
-      *EXIT_CODE_DIFFERENT
+      ExitCode::from(CODE_DIFFERENT)
     } else {
-      *EXIT_CODE_EQUAL
+      ExitCode::from(CODE_EQUAL)
     };
   }
 
@@ -275,7 +269,7 @@ fn main() -> ExitCode {
       }
       println!();
     }
-    return *EXIT_CODE_DIFFERENT;
+    return ExitCode::from(CODE_DIFFERENT);
   }
-  *EXIT_CODE_EQUAL
+  ExitCode::from(CODE_EQUAL)
 }

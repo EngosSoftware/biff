@@ -1,22 +1,15 @@
 //! # Command-line arguments
 
-use crate::{CODE_DIFFERENT, CODE_EQUAL, CODE_ERROR, CODE_INVALID_MARKER};
 use clap::{arg, command, ArgAction, ArgGroup, ArgMatches};
-use once_cell::sync::Lazy;
 use std::str::FromStr;
 
 const HELP_ABSOLUTE: &str = "Acceptable absolute difference limit";
-static LONG_HELP_ABSOLUTE: Lazy<String> = Lazy::new(|| {
-  format!(
-    r#"Acceptable absolute difference limit.
+const LONG_HELP_ABSOLUTE: &str = r#"Acceptable absolute difference limit.
 Specify acceptable maximum difference limit between compared files, expressed
 as an <ABSOLUTE> number. When the number of differences between two files
 is less or equal to <ABSOLUTE> value, files are considered as equal and
-status code {} is returned. When the number of differences exceeds this limit,
-then files are considered as not equal and status code {} is returned."#,
-    CODE_EQUAL, CODE_DIFFERENT
-  )
-});
+status code 0 is returned. When the number of differences exceeds this limit,
+then files are considered as not equal and status code 1 is returned."#;
 
 const HELP_PRINT_BYTES: &str = "Display differing bytes";
 const LONG_HELP_PRINT_BYTES: &str = r#"Display the values of differing bytes. The first number is the differing byte
@@ -47,16 +40,11 @@ When one of the compared files is shorter than the other, then instead
 the byte value the text EOF is displayed."#;
 
 const HELP_MARKER: &str = "Check file header marker before comparing files";
-static LONG_HELP_MARKER: Lazy<String> = Lazy::new(|| {
-  format!(
-    r#"Check the file header marker before starting the comparison.
+const LONG_HELP_MARKER: &str = r#"Check the file header marker before starting the comparison.
 When both compared files do not begin with specified <MARKER>,
-then the comparison is not performed and the status code {} is returned.
+then the comparison is not performed and the status code 3 is returned.
 <MARKER> may have any length and should be in the form of hexadecimal text
-defining the consecutive marker's bytes."#,
-    CODE_INVALID_MARKER
-  )
-});
+defining the consecutive marker's bytes."#;
 
 const HELP_BYTES: &str = "Compare at most <COUNT> input bytes";
 const LONG_HELP_BYTES: &str = r#"Compare at most <COUNT> input bytes.
@@ -68,31 +56,21 @@ const LONG_HELP_OCTAL: &str = r#"Display byte values as octal numbers. This opti
 all displayed byte values to be converted to octal numbers."#;
 
 const HELP_PERCENT: &str = "Acceptable percent difference limit";
-static LONG_HELP_PERCENT: Lazy<String> = Lazy::new(|| {
-  format!(
-    r#"Acceptable percent difference limit.
+const LONG_HELP_PERCENT: &str = r#"Acceptable percent difference limit.
 Specify acceptable maximum difference limit between compared files,
 expressed as <PERCENT> value. When the number of differences between two files
 is less or equal to <PERCENT> value, files are considered as equal and
-status code {} is returned. When the number of differences exceeds this limit,
-then files are considered as not equal and status code {} is returned."#,
-    CODE_EQUAL, CODE_DIFFERENT
-  )
-});
+status code 0 is returned. When the number of differences exceeds this limit,
+then files are considered as not equal and status code 1 is returned."#;
 
 const HELP_QUIET: &str = "Suppress all normal output";
-static LONG_HELP_QUIET: Lazy<String> = Lazy::new(|| {
-  format!(
-    r#"Suppress all normal output. No messages will be printed to standard output.
+const LONG_HELP_QUIET: &str = r#"Suppress all normal output. No messages will be printed to standard output.
 The result of the comparison may be checked using the returned status code.
 Returned status codes are:
-  {} - files are equal,
-  {} - files differ,
-  {} - an error occurred,
-  {} - invalid file marker."#,
-    CODE_EQUAL, CODE_DIFFERENT, CODE_ERROR, CODE_INVALID_MARKER
-  )
-});
+  0 - files are equal,
+  1 - files differ,
+  2 - an error occurred,
+  3 - invalid file marker."#;
 
 const HELP_HEXADECIMAL: &str = "Display byte values as hexadecimal numbers";
 const LONG_HELP_HEXADECIMAL: &str = r#"Display byte values as hexadecimal numbers. This option forces
@@ -110,7 +88,7 @@ pub fn get_matches() -> ArgMatches {
     .arg(
       arg!(-a --absolute <ABSOLUTE>)
         .help(HELP_ABSOLUTE)
-        .long_help(&*LONG_HELP_ABSOLUTE)
+        .long_help(LONG_HELP_ABSOLUTE.to_string())
         .action(ArgAction::Set),
     )
     .arg(
@@ -144,7 +122,7 @@ pub fn get_matches() -> ArgMatches {
     .arg(
       arg!(-m --marker <MARKER>)
         .help(HELP_MARKER)
-        .long_help(&*LONG_HELP_MARKER)
+        .long_help(LONG_HELP_MARKER)
         .action(ArgAction::Set),
     )
     .arg(
@@ -164,14 +142,14 @@ pub fn get_matches() -> ArgMatches {
     .arg(
       arg!(-p --percent <PERCENT>)
         .help(HELP_PERCENT)
-        .long_help(&*LONG_HELP_PERCENT)
+        .long_help(LONG_HELP_PERCENT)
         .action(ArgAction::Set),
     )
     .arg(
       arg!(--quiet)
         .short('q')
         .help(HELP_QUIET)
-        .long_help(&*LONG_HELP_QUIET)
+        .long_help(LONG_HELP_QUIET)
         .action(ArgAction::SetTrue),
     )
     .arg(

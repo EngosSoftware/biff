@@ -1,7 +1,7 @@
 use super::*;
 use assert_cmd::Command;
 
-#[cfg(target_os = "linux")]
+#[cfg(not(target_os = "windows"))]
 #[test]
 fn _0001() {
   let mut cmd = Command::cargo_bin("biff").unwrap();
