@@ -80,11 +80,8 @@ fn main() -> ExitCode {
     skip_2,
     max_bytes,
     marker,
-    verbose,
-    quiet,
     percentage_limit,
     absolute_limit,
-    print_bytes,
   };
 
   match compare(&options) {
@@ -98,7 +95,7 @@ fn main() -> ExitCode {
       ExitCode::from(CODE_EQUAL)
     }
     ComparisonResult::AbsoluteLimitExceeded(limit, difference) => {
-      if !options.quiet {
+      if !quiet {
         println!(
           "{} {} differ: limit {} exceeded by value {}",
           options.file_name_1, options.file_name_2, limit, difference
@@ -107,7 +104,7 @@ fn main() -> ExitCode {
       ExitCode::from(CODE_DIFFERENT)
     }
     ComparisonResult::PercentageLimitExceeded(limit, difference) => {
-      if !options.quiet {
+      if !quiet {
         println!(
           "{} {} differ: limit {}% exceeded by value {:.03}%",
           options.file_name_1, options.file_name_2, limit, difference
@@ -116,12 +113,12 @@ fn main() -> ExitCode {
       ExitCode::from(CODE_DIFFERENT)
     }
     ComparisonResult::Different(details) => {
-      if !options.verbose && !options.quiet {
+      if !verbose && !quiet {
         print!(
           "{} {} differ: byte {}, line {}",
           options.file_name_1, options.file_name_2, details.first_difference_offset, details.first_difference_line
         );
-        if options.print_bytes {
+        if print_bytes {
           print!(" is ");
           print_byte(details.first_difference_byte_1, byte_format);
           print!(" ");
@@ -129,7 +126,7 @@ fn main() -> ExitCode {
         }
         println!();
       }
-      if options.verbose {
+      if verbose {
         for (offset, byte_1, byte_2) in details.differences {
           print_diff(offset, byte_1, byte_2, byte_format);
         }
@@ -137,7 +134,7 @@ fn main() -> ExitCode {
       ExitCode::from(CODE_DIFFERENT)
     }
     ComparisonResult::InvalidMarker(file_name, expected, actual) => {
-      if !options.quiet {
+      if !quiet {
         println!(
           "marker not matched for file: {}, expected: {}, actual: {}",
           file_name,

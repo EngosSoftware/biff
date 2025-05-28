@@ -12,13 +12,10 @@ pub struct ComparisonOptions {
   pub skip_2: usize,
   pub max_bytes: usize,
   pub marker: Vec<u8>,
-  pub verbose: bool,
-  pub quiet: bool,
   /// Accepted percentage limit of differences between compared files.
   pub percentage_limit: Option<f64>,
   /// Accepted absolute limit of differences between compared files.
   pub absolute_limit: Option<usize>,
-  pub print_bytes: bool,
 }
 
 /// Result details of file comparison.
