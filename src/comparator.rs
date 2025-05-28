@@ -22,8 +22,6 @@ pub struct ComparisonOptions {
 #[derive(Debug, Clone)]
 #[non_exhaustive]
 pub struct ComparisonDetails {
-  /// Total number of different bytes in compared files.
-  pub counter: usize,
   /// Size of the files, when files differ in sizes, the bigger file size is returned.
   pub size: usize,
   /// Header marker of the first file.
@@ -52,7 +50,6 @@ impl ComparisonDetails {
   /// Creates new comparison result.
   fn new() -> Self {
     Self {
-      counter: 0,
       size: 0,
       marker_1: vec![],
       marker_2: vec![],
@@ -120,7 +117,6 @@ pub fn compare(options: &ComparisonOptions) -> ComparisonResult {
             details.first_difference_byte_2 = Some(b2);
           }
           details.differences.push((details.size, Some(b1), Some(b2)));
-          details.counter += 1;
           first_difference = true;
         }
       }
@@ -131,7 +127,6 @@ pub fn compare(options: &ComparisonOptions) -> ComparisonResult {
           details.first_difference_byte_2 = Some(b2);
         }
         details.differences.push((details.size, None, Some(b2)));
-        details.counter += 1;
         first_difference = true;
       }
       (Some(Ok(b1)), None) => {
@@ -144,7 +139,6 @@ pub fn compare(options: &ComparisonOptions) -> ComparisonResult {
           details.first_difference_byte_1 = Some(b1);
         }
         details.differences.push((details.size, Some(b1), None));
-        details.counter += 1;
         first_difference = true;
       }
       (None, None) => break,
@@ -165,23 +159,23 @@ pub fn compare(options: &ComparisonOptions) -> ComparisonResult {
       details.marker_2.clone(),
     );
   }
+  let absolute_difference = details.differences.len();
   if let Some(limit) = options.percentage_limit {
-    let difference = details.counter as f64 * 100.0 / details.size as f64;
-    return if difference > limit {
-      ComparisonResult::PercentageLimitExceeded(limit, difference)
+    let percentage_difference = absolute_difference as f64 * 100.0 / details.size as f64;
+    return if percentage_difference > limit {
+      ComparisonResult::PercentageLimitExceeded(limit, percentage_difference)
     } else {
-      ComparisonResult::SimilarPercentage(limit, difference)
+      ComparisonResult::SimilarPercentage(limit, percentage_difference)
     };
   }
   if let Some(limit) = options.absolute_limit {
-    let difference = details.counter;
-    return if details.counter > limit {
-      ComparisonResult::AbsoluteLimitExceeded(limit, difference)
+    return if absolute_difference > limit {
+      ComparisonResult::AbsoluteLimitExceeded(limit, absolute_difference)
     } else {
-      ComparisonResult::SimilarAbsolute(limit, difference)
+      ComparisonResult::SimilarAbsolute(limit, absolute_difference)
     };
   }
-  if details.counter > 0 {
+  if absolute_difference > 0 {
     return ComparisonResult::Different(details);
   }
   ComparisonResult::Identical
