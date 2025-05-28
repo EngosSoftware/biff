@@ -67,3 +67,18 @@ fn _0004() {
       .stderr("");
   }
 }
+
+#[test]
+fn _0005() {
+  let mut cmd = Command::cargo_bin("biff").unwrap();
+  cmd
+    .current_dir(current_dir(file!()))
+    .arg("-m")
+    .arg("01xy")
+    .arg("file1.txt")
+    .arg("file2.txt")
+    .assert()
+    .code(2)
+    .stdout("")
+    .stderr("Invalid marker. Invalid character \'x\' at position 2\n");
+}

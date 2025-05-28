@@ -6,11 +6,17 @@ const LF: u8 = b'\n';
 #[derive(Debug, Default, Clone)]
 #[non_exhaustive]
 pub struct ComparisonOptions {
+  /// Name of the first file in comparison.
   pub file_name_1: String,
+  /// Number of starting bytes to skip in the first file.
   pub skip_1: usize,
+  /// Name of the second file in comparison.
   pub file_name_2: String,
+  /// Number of starting bytes to skip in the second file.
   pub skip_2: usize,
+  /// Maximum number of bytes to compare.
   pub max_bytes: usize,
+  /// Expected file marker at the beginning of both files.
   pub marker: Vec<u8>,
   /// Accepted percentage limit of differences between compared files.
   pub percentage_limit: Option<f64>,
@@ -65,9 +71,9 @@ impl ComparisonDetails {
 pub enum ComparisonResult {
   /// Compared files are identical.
   Identical,
-  /// Compared files are similar, differences are under specified percentage limits.
+  /// Compared files are similar, differences are under specified percentage limit.
   SimilarPercentage(f64, f64),
-  /// Compared files are similar, differences are under specified absolute limits.
+  /// Compared files are similar, differences are under specified absolute limit.
   SimilarAbsolute(usize, usize),
   /// Compared files are different.
   Different(ComparisonDetails),
@@ -88,11 +94,11 @@ pub fn compare(options: &ComparisonOptions) -> ComparisonResult {
   let mut details = ComparisonDetails::default();
   let file_1 = match File::open(&options.file_name_1) {
     Ok(file) => file,
-    Err(reason) => return ComparisonResult::Error(format!("Unexpected: {:?}", reason)),
+    Err(reason) => return ComparisonResult::Error(format!("Can not open file. {:?}", reason)),
   };
   let file_2 = match File::open(&options.file_name_2) {
     Ok(file) => file,
-    Err(reason) => return ComparisonResult::Error(format!("Unexpected: {:?}", reason)),
+    Err(reason) => return ComparisonResult::Error(format!("Can not open file. {:?}", reason)),
   };
   let buf_1 = BufReader::new(file_1);
   let buf_2 = BufReader::new(file_2);

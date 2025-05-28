@@ -54,7 +54,13 @@ fn main() -> ExitCode {
   let file_name_1 = get_str(&matches, "FILE1").unwrap();
   let file_name_2 = get_str(&matches, "FILE2").unwrap();
   let marker = if let Some(marker_str) = get_str(&matches, "marker") {
-    hex::decode(marker_str).unwrap()
+    match hex::decode(marker_str) {
+      Ok(marker_bytes) => marker_bytes,
+      Err(reason) => {
+        eprintln!("Invalid marker. {}", reason);
+        return ExitCode::from(CODE_ERROR);
+      }
+    }
   } else {
     vec![]
   };
