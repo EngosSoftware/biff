@@ -53,7 +53,7 @@ fn _0004() {
     .arg("file2.txt")
     .assert()
     .code(3)
-    .stdout("marker not matched for file: file2.txt\n")
+    .stdout("marker not matched for file: file2.txt, expected: 255044462d312e340a25, actual: 4c6f72656d2069707375\n")
     .stderr("");
 }
 
@@ -68,7 +68,7 @@ fn _0005() {
     .arg("file1.pdf")
     .assert()
     .code(3)
-    .stdout("marker not matched for file: file2.txt\n")
+    .stdout("marker not matched for file: file2.txt, expected: 255044462d312e340a25, actual: 4c6f72656d2069707375\n")
     .stderr("");
 }
 
