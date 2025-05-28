@@ -6,7 +6,7 @@ mod cli;
 mod comparator;
 
 use crate::cli::{get_bytes, get_flag, get_matches, get_skip, get_str, get_value};
-use crate::comparator::{compare, ByteFormat, ComparisonOptions, ComparisonResult};
+use crate::comparator::{compare, print_byte, ByteFormat, ComparisonOptions, ComparisonResult};
 use std::process::ExitCode;
 
 const CODE_EQUAL: u8 = 0;
@@ -39,7 +39,7 @@ fn main() -> ExitCode {
   let (skip_1, skip_2) = get_skip(&matches, "ignore-initial");
   let max_bytes = get_bytes(&matches, "bytes", usize::MAX);
 
-  let comparison_options = ComparisonOptions {
+  let options = ComparisonOptions {
     file_name_1,
     skip_1,
     file_name_2,
@@ -54,10 +54,53 @@ fn main() -> ExitCode {
     print_bytes,
   };
 
-  match compare(&comparison_options) {
+  match compare(&options) {
     ComparisonResult::Identical => ExitCode::from(CODE_EQUAL),
-    ComparisonResult::Different => ExitCode::from(CODE_DIFFERENT),
-    ComparisonResult::InvalidMarker => ExitCode::from(CODE_INVALID_MARKER),
+    ComparisonResult::AbsoluteLimitExceeded(limit, difference) => {
+      if !options.quiet {
+        println!(
+          "{} {} differ: limit {} exceeded by value {}",
+          options.file_name_1, options.file_name_2, limit, difference
+        );
+      }
+      ExitCode::from(CODE_DIFFERENT)
+    }
+    ComparisonResult::PercentageLimitExceeded(limit, difference) => {
+      if !options.quiet {
+        println!(
+          "{} {} differ: limit {}% exceeded by value {:.03}%",
+          options.file_name_1, options.file_name_2, limit, difference
+        );
+      }
+      ExitCode::from(CODE_DIFFERENT)
+    }
+    ComparisonResult::Different(details) => {
+      if !options.verbose && !options.quiet {
+        print!(
+          "{} {} differ: byte {}, line {}",
+          options.file_name_1, options.file_name_2, details.first_difference_offset, details.first_difference_line
+        );
+        if options.print_bytes {
+          print!(" is ");
+          print_byte(details.first_difference_byte_1, options.byte_format);
+          print!(" ");
+          print_byte(details.first_difference_byte_2, options.byte_format);
+        }
+        println!();
+      }
+      ExitCode::from(CODE_DIFFERENT)
+    }
+    ComparisonResult::InvalidMarker(file_name, expected, actual) => {
+      if !options.quiet {
+        println!(
+          "marker not matched for file: {}, expected: {}, actual: {}",
+          file_name,
+          hex::encode(expected),
+          hex::encode(actual)
+        );
+      }
+      ExitCode::from(CODE_INVALID_MARKER)
+    }
     ComparisonResult::Error(reason) => {
       eprintln!("{}", reason);
       ExitCode::from(CODE_ERROR)

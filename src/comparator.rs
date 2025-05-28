@@ -103,9 +103,19 @@ impl ComparisonDetails {
 }
 
 pub enum ComparisonResult {
+  /// Compared files are identical.
   Identical,
-  Different,
-  InvalidMarker,
+  /// Compared files are different.
+  Different(ComparisonDetails),
+  /// Percentage limit of differences was exceeded,
+  /// contains the limit (first field) and actual difference (second field).
+  PercentageLimitExceeded(f64, f64),
+  /// Absolute limit of differences was exceeded,
+  /// contains the limit (first field) and actual difference (second field).
+  AbsoluteLimitExceeded(usize, usize),
+  /// File has and invalid marker.
+  InvalidMarker(String, Vec<u8>, Vec<u8>),
+  /// Comparison process ended with an error.
   Error(String),
 }
 
@@ -175,59 +185,36 @@ pub fn compare(options: &ComparisonOptions) -> ComparisonResult {
     }
   }
   if options.marker != details.marker_1 {
-    if !options.quiet {
-      println!("marker not matched for file: {}", options.file_name_1);
-    }
-    return ComparisonResult::InvalidMarker;
+    return ComparisonResult::InvalidMarker(
+      options.file_name_1.clone(),
+      options.marker.clone(),
+      details.marker_1.clone(),
+    );
   }
   if options.marker != details.marker_2 {
-    if !options.quiet {
-      println!("marker not matched for file: {}", options.file_name_2);
-    }
-    return ComparisonResult::InvalidMarker;
+    return ComparisonResult::InvalidMarker(
+      options.file_name_2.clone(),
+      options.marker.clone(),
+      details.marker_2.clone(),
+    );
   }
   if let Some(limit) = options.percentage_limit {
     let difference = details.counter as f64 * 100.0 / details.size as f64;
     return if difference > limit {
-      if !options.quiet {
-        println!(
-          "{} {} differ: limit {}% exceeded by value {:.03}%",
-          options.file_name_1, options.file_name_2, limit, difference
-        );
-      }
-      ComparisonResult::Different
+      ComparisonResult::PercentageLimitExceeded(limit, difference)
     } else {
       ComparisonResult::Identical
     };
   }
   if let Some(limit) = options.absolute_limit {
     return if details.counter > limit {
-      if !options.quiet {
-        println!(
-          "{} {} differ: limit {} exceeded by value {}",
-          options.file_name_1, options.file_name_2, limit, details.counter
-        );
-      }
-      ComparisonResult::Different
+      ComparisonResult::AbsoluteLimitExceeded(limit, details.counter)
     } else {
       ComparisonResult::Identical
     };
   }
   if details.counter > 0 {
-    if !options.verbose && !options.quiet {
-      print!(
-        "{} {} differ: byte {}, line {}",
-        options.file_name_1, options.file_name_2, details.first_difference_offset, details.first_difference_line
-      );
-      if options.print_bytes {
-        print!(" is ");
-        print_byte(details.first_difference_byte_1, options.byte_format);
-        print!(" ");
-        print_byte(details.first_difference_byte_2, options.byte_format);
-      }
-      println!();
-    }
-    return ComparisonResult::Different;
+    return ComparisonResult::Different(details);
   }
   ComparisonResult::Identical
 }
