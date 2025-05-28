@@ -3,42 +3,6 @@ use std::io::{BufReader, Read};
 
 const LF: u8 = b'\n';
 
-/// Format of the byte value when printed.
-#[derive(Debug, Default, Copy, Clone)]
-pub(crate) enum ByteFormat {
-  /// Decimal value.
-  Decimal,
-  /// Octal value.
-  Octal,
-  /// Hexadecimal value.
-  #[default]
-  Hex,
-}
-
-/// Displays byte value in specified format.
-pub(crate) fn print_byte(value: Option<u8>, byte_format: ByteFormat) {
-  if let Some(b) = value {
-    match byte_format {
-      ByteFormat::Decimal => print!("{}", b),
-      ByteFormat::Octal => print!("{:o}", b),
-      ByteFormat::Hex => print!("{:x}", b),
-    }
-  } else {
-    print!("EOF")
-  }
-}
-
-/// Displays byte differences.
-pub(crate) fn print_diff(offset: usize, b1: Option<u8>, b2: Option<u8>, verbose: bool, byte_format: ByteFormat) {
-  if verbose {
-    print!("{:<5}", offset);
-    print_byte(b1, byte_format);
-    print!("  ");
-    print_byte(b2, byte_format);
-    println!()
-  }
-}
-
 #[derive(Debug, Default, Clone)]
 #[non_exhaustive]
 pub struct ComparisonOptions {
@@ -50,7 +14,6 @@ pub struct ComparisonOptions {
   pub marker: Vec<u8>,
   pub verbose: bool,
   pub quiet: bool,
-  pub byte_format: ByteFormat,
   /// Accepted percentage limit of differences between compared files.
   pub percentage_limit: Option<f64>,
   /// Accepted absolute limit of differences between compared files.
@@ -78,6 +41,8 @@ pub struct ComparisonDetails {
   pub first_difference_byte_1: Option<u8>,
   /// First differing byte from the second file.
   pub first_difference_byte_2: Option<u8>,
+  /// List of different bytes with offsets.
+  pub differences: Vec<(usize, Option<u8>, Option<u8>)>,
 }
 
 impl Default for ComparisonDetails {
@@ -98,6 +63,7 @@ impl ComparisonDetails {
       first_difference_line: 1,
       first_difference_byte_1: None,
       first_difference_byte_2: None,
+      differences: vec![],
     }
   }
 }
@@ -156,7 +122,7 @@ pub fn compare(options: &ComparisonOptions) -> ComparisonResult {
             details.first_difference_byte_1 = Some(b1);
             details.first_difference_byte_2 = Some(b2);
           }
-          print_diff(details.size, Some(b1), Some(b2), options.verbose, options.byte_format);
+          details.differences.push((details.size, Some(b1), Some(b2)));
           details.counter += 1;
           first_difference = true;
         }
@@ -167,7 +133,7 @@ pub fn compare(options: &ComparisonOptions) -> ComparisonResult {
           details.first_difference_offset = details.size;
           details.first_difference_byte_2 = Some(b2);
         }
-        print_diff(details.size, None, Some(b2), options.verbose, options.byte_format);
+        details.differences.push((details.size, None, Some(b2)));
         details.counter += 1;
         first_difference = true;
       }
@@ -180,7 +146,7 @@ pub fn compare(options: &ComparisonOptions) -> ComparisonResult {
           details.first_difference_offset = details.size;
           details.first_difference_byte_1 = Some(b1);
         }
-        print_diff(details.size, Some(b1), None, options.verbose, options.byte_format);
+        details.differences.push((details.size, Some(b1), None));
         details.counter += 1;
         first_difference = true;
       }

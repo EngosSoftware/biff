@@ -6,13 +6,47 @@ mod cli;
 mod comparator;
 
 use crate::cli::{get_bytes, get_flag, get_matches, get_skip, get_str, get_value};
-use crate::comparator::{compare, print_byte, ByteFormat, ComparisonOptions, ComparisonResult};
+use crate::comparator::{compare, ComparisonOptions, ComparisonResult};
 use std::process::ExitCode;
 
 const CODE_EQUAL: u8 = 0;
 const CODE_DIFFERENT: u8 = 1;
 const CODE_ERROR: u8 = 2;
 const CODE_INVALID_MARKER: u8 = 3;
+
+/// Format of the byte value when printed.
+#[derive(Debug, Default, Copy, Clone)]
+pub(crate) enum ByteFormat {
+  /// Decimal value.
+  Decimal,
+  /// Octal value.
+  Octal,
+  /// Hexadecimal value.
+  #[default]
+  Hex,
+}
+
+/// Displays byte value in specified format.
+pub(crate) fn print_byte(value: Option<u8>, byte_format: ByteFormat) {
+  if let Some(b) = value {
+    match byte_format {
+      ByteFormat::Decimal => print!("{}", b),
+      ByteFormat::Octal => print!("{:o}", b),
+      ByteFormat::Hex => print!("{:x}", b),
+    }
+  } else {
+    print!("EOF")
+  }
+}
+
+/// Displays byte differences.
+pub(crate) fn print_diff(offset: usize, b1: Option<u8>, b2: Option<u8>, byte_format: ByteFormat) {
+  print!("{:<5}", offset);
+  print_byte(b1, byte_format);
+  print!("  ");
+  print_byte(b2, byte_format);
+  println!()
+}
 
 /// Main entrypoint of `biff` application.
 fn main() -> ExitCode {
@@ -48,7 +82,6 @@ fn main() -> ExitCode {
     marker,
     verbose,
     quiet,
-    byte_format,
     percentage_limit,
     absolute_limit,
     print_bytes,
@@ -90,11 +123,16 @@ fn main() -> ExitCode {
         );
         if options.print_bytes {
           print!(" is ");
-          print_byte(details.first_difference_byte_1, options.byte_format);
+          print_byte(details.first_difference_byte_1, byte_format);
           print!(" ");
-          print_byte(details.first_difference_byte_2, options.byte_format);
+          print_byte(details.first_difference_byte_2, byte_format);
         }
         println!();
+      }
+      if options.verbose {
+        for (offset, byte_1, byte_2) in details.differences {
+          print_diff(offset, byte_1, byte_2, byte_format);
+        }
       }
       ExitCode::from(CODE_DIFFERENT)
     }
