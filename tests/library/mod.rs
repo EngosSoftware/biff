@@ -4,10 +4,10 @@ use biff::{compare, ComparisonOptions, ComparisonResult};
 fn _0001() {
   let input_1: &[u8] = &[0, 1, 2, 3];
   let input_2: &[u8] = &[0, 1, 2, 3];
-  assert!(matches!(
+  assert_eq!(
+    ComparisonResult::Identical,
     compare(input_1, input_2, &ComparisonOptions::default()),
-    ComparisonResult::Identical
-  ));
+  );
 }
 
 #[test]

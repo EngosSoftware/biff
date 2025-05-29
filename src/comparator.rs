@@ -1,5 +1,8 @@
+//! # Byte by byte data comparator
+
 use std::io::{BufReader, Read};
 
+/// Comparison options.
 #[derive(Debug, Default, Clone)]
 #[non_exhaustive]
 pub struct ComparisonOptions {
@@ -17,7 +20,7 @@ pub struct ComparisonOptions {
   pub absolute_limit: Option<usize>,
 }
 
-/// Result details of file comparison.
+/// Details of the comparison result/process.
 #[derive(Debug, Clone, PartialEq)]
 #[non_exhaustive]
 pub struct ComparisonDetails {
@@ -61,6 +64,7 @@ impl ComparisonDetails {
   }
 }
 
+/// Result of the comparison.
 #[derive(Debug, Clone, PartialEq)]
 pub enum ComparisonResult {
   /// Compared data streams are identical.
@@ -85,7 +89,20 @@ pub enum ComparisonResult {
   Error(String),
 }
 
-/// Compares two files.
+/// Compares two binary data streams.
+///
+/// # Examples
+///
+/// ```
+/// use biff::{compare, ComparisonOptions, ComparisonResult};
+///
+/// let input_1: &[u8] = &[0, 1, 2, 3];
+/// let input_2: &[u8] = &[0, 1, 2, 3];
+/// assert_eq!(
+///   ComparisonResult::Identical,
+///   compare(input_1, input_2, &ComparisonOptions::default()),
+/// );
+/// ```
 pub fn compare(reader_1: impl Read, reader_2: impl Read, options: &ComparisonOptions) -> ComparisonResult {
   let mut details = ComparisonDetails::default();
   let buf_1 = BufReader::new(reader_1);
