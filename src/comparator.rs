@@ -4,13 +4,13 @@ use std::io::{BufReader, Read};
 #[non_exhaustive]
 pub struct ComparisonOptions {
   /// Number of starting bytes to skip in the first data stream.
-  pub skip_1: usize,
+  pub skip_1: Option<usize>,
   /// Number of starting bytes to skip in the second data stream.
-  pub skip_2: usize,
+  pub skip_2: Option<usize>,
   /// Maximum number of bytes to compare.
-  pub max_bytes: usize,
+  pub max_bytes: Option<usize>,
   /// Expected file marker at the beginning of both data streams.
-  pub marker: Vec<u8>,
+  pub marker: Option<Vec<u8>>,
   /// Accepted percentage limit of differences between compared data streams.
   pub percentage_limit: Option<f64>,
   /// Accepted absolute limit of differences between compared data streams.
@@ -90,8 +90,14 @@ pub fn compare(reader_1: impl Read, reader_2: impl Read, options: &ComparisonOpt
   let mut details = ComparisonDetails::default();
   let buf_1 = BufReader::new(reader_1);
   let buf_2 = BufReader::new(reader_2);
-  let mut iter_1 = buf_1.bytes().skip(options.skip_1).take(options.max_bytes);
-  let mut iter_2 = buf_2.bytes().skip(options.skip_2).take(options.max_bytes);
+  let mut iter_1 = buf_1
+    .bytes()
+    .skip(options.skip_1.unwrap_or(0))
+    .take(options.max_bytes.unwrap_or(usize::MAX));
+  let mut iter_2 = buf_2
+    .bytes()
+    .skip(options.skip_2.unwrap_or(0))
+    .take(options.max_bytes.unwrap_or(usize::MAX));
   let mut first_difference = false;
   loop {
     match (iter_1.next(), iter_2.next()) {
@@ -99,9 +105,11 @@ pub fn compare(reader_1: impl Read, reader_2: impl Read, options: &ComparisonOpt
         if !first_difference && byte_1 == b'\n' {
           details.first_difference_line += 1;
         }
-        if details.size < options.marker.len() {
-          details.marker_1.push(byte_1);
-          details.marker_2.push(byte_2);
+        if let Some(marker) = &options.marker {
+          if details.size < marker.len() {
+            details.marker_1.push(byte_1);
+            details.marker_2.push(byte_2);
+          }
         }
         details.size += 1;
         if byte_1 != byte_2 {
@@ -141,11 +149,13 @@ pub fn compare(reader_1: impl Read, reader_2: impl Read, options: &ComparisonOpt
       }
     }
   }
-  if options.marker != details.marker_1 {
-    return ComparisonResult::InvalidMarker1(options.marker.clone(), details.marker_1.clone());
-  }
-  if options.marker != details.marker_2 {
-    return ComparisonResult::InvalidMarker2(options.marker.clone(), details.marker_2.clone());
+  if let Some(marker) = options.marker.clone() {
+    if marker != details.marker_1 {
+      return ComparisonResult::InvalidMarker1(marker, details.marker_1.clone());
+    }
+    if marker != details.marker_2 {
+      return ComparisonResult::InvalidMarker2(marker, details.marker_2.clone());
+    }
   }
   let absolute_difference = details.differences.len();
   if let Some(limit) = options.percentage_limit {

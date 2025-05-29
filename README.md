@@ -159,7 +159,7 @@ $ echo $?
 1
 
 $ biff -p 0.1 sample1.txt sample2.txt
-sample1.txt sample2.txt differ: limit 0.1% exceeded by value 25.000%
+sample1.txt sample2.txt differ: limit 0.1% exceeded by value 25.00%
 $ echo $?
 1
 

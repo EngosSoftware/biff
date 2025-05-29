@@ -56,14 +56,14 @@ fn main() -> ExitCode {
   let file_name_2 = get_str(&matches, "FILE2").unwrap();
   let marker = if let Some(marker_str) = get_str(&matches, "marker") {
     match hex::decode(marker_str) {
-      Ok(marker_bytes) => marker_bytes,
+      Ok(marker_bytes) => Some(marker_bytes),
       Err(reason) => {
         eprintln!("Invalid marker. {}", reason);
         return ExitCode::from(CODE_ERROR);
       }
     }
   } else {
-    vec![]
+    None
   };
   let percentage_limit: Option<f64> = get_value(&matches, "percent");
   let absolute_limit: Option<usize> = get_value(&matches, "absolute");
@@ -78,7 +78,7 @@ fn main() -> ExitCode {
   let verbose = get_flag(&matches, "verbose");
   let quiet = get_flag(&matches, "quiet") || get_flag(&matches, "silent");
   let (skip_1, skip_2) = get_skip(&matches, "ignore-initial");
-  let max_bytes = get_bytes(&matches, "bytes", usize::MAX);
+  let max_bytes = get_bytes(&matches, "bytes");
 
   let file_1 = match File::open(&file_name_1) {
     Ok(file) => file,
@@ -126,7 +126,7 @@ fn main() -> ExitCode {
     ComparisonResult::PercentageLimitExceeded(limit, difference) => {
       if !quiet {
         println!(
-          "{} {} differ: limit {}% exceeded by value {:.03}%",
+          "{} {} differ: limit {}% exceeded by value {:.2}%",
           file_name_1, file_name_2, limit, difference
         );
       }
