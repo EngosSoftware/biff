@@ -71,7 +71,7 @@ fn _0005() {
     .code(2)
     .stdout("")
     .stderr(
-      "Unexpected: Some(Err(Os { code: 5, kind: Uncategorized, message: \"Input/output error\" })), Some(Ok(76))\n",
+      "Reading bytes failed. Some(Err(Os { code: 5, kind: Uncategorized, message: \"Input/output error\" })) Some(Ok(76))\n",
     );
 }
 
@@ -86,6 +86,6 @@ fn _0006() {
     .assert()
     .code(2)
     .stderr(
-      "Unexpected: Some(Ok(76)), Some(Err(Os { code: 5, kind: Uncategorized, message: \"Input/output error\" }))\n",
+      "Reading bytes failed. Some(Ok(76)) Some(Err(Os { code: 5, kind: Uncategorized, message: \"Input/output error\" }))\n",
     );
 }

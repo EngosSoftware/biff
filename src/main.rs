@@ -7,6 +7,7 @@ mod comparator;
 
 use crate::cli::{get_bytes, get_flag, get_matches, get_skip, get_str, get_value};
 use crate::comparator::{compare, ComparisonOptions, ComparisonResult};
+use std::fs::File;
 use std::process::ExitCode;
 
 const CODE_EQUAL: u8 = 0;
@@ -79,6 +80,21 @@ fn main() -> ExitCode {
   let (skip_1, skip_2) = get_skip(&matches, "ignore-initial");
   let max_bytes = get_bytes(&matches, "bytes", usize::MAX);
 
+  let file_1 = match File::open(&file_name_1) {
+    Ok(file) => file,
+    Err(reason) => {
+      eprintln!("Can not open file. {:?}", reason);
+      return ExitCode::from(CODE_ERROR);
+    }
+  };
+  let file_2 = match File::open(&file_name_2) {
+    Ok(file) => file,
+    Err(reason) => {
+      eprintln!("Can not open file. {:?}", reason);
+      return ExitCode::from(CODE_ERROR);
+    }
+  };
+
   let options = ComparisonOptions {
     file_name_1,
     skip_1,
@@ -90,7 +106,7 @@ fn main() -> ExitCode {
     absolute_limit,
   };
 
-  match compare(&options) {
+  match compare(file_1, file_2, &options) {
     ComparisonResult::Identical => ExitCode::from(CODE_EQUAL),
     ComparisonResult::SimilarPercentage(limit, difference) => {
       let (_, _) = (limit, difference);

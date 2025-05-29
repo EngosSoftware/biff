@@ -1,7 +1,4 @@
-use std::fs::File;
 use std::io::{BufReader, Read};
-
-const LF: u8 = b'\n';
 
 #[derive(Debug, Default, Clone)]
 #[non_exhaustive]
@@ -90,65 +87,59 @@ pub enum ComparisonResult {
 }
 
 /// Compares two files.
-pub fn compare(options: &ComparisonOptions) -> ComparisonResult {
+pub fn compare(reader_1: impl Read, reader_2: impl Read, options: &ComparisonOptions) -> ComparisonResult {
   let mut details = ComparisonDetails::default();
-  let file_1 = match File::open(&options.file_name_1) {
-    Ok(file) => file,
-    Err(reason) => return ComparisonResult::Error(format!("Can not open file. {:?}", reason)),
-  };
-  let file_2 = match File::open(&options.file_name_2) {
-    Ok(file) => file,
-    Err(reason) => return ComparisonResult::Error(format!("Can not open file. {:?}", reason)),
-  };
-  let buf_1 = BufReader::new(file_1);
-  let buf_2 = BufReader::new(file_2);
+  let buf_1 = BufReader::new(reader_1);
+  let buf_2 = BufReader::new(reader_2);
   let mut iter_1 = buf_1.bytes().skip(options.skip_1).take(options.max_bytes);
   let mut iter_2 = buf_2.bytes().skip(options.skip_2).take(options.max_bytes);
   let mut first_difference = false;
   loop {
     match (iter_1.next(), iter_2.next()) {
-      (Some(Ok(b1)), Some(Ok(b2))) => {
-        if !first_difference && b1 == LF {
+      (Some(Ok(byte_1)), Some(Ok(byte_2))) => {
+        if !first_difference && byte_1 == b'\n' {
           details.first_difference_line += 1;
         }
         if details.size < options.marker.len() {
-          details.marker_1.push(b1);
-          details.marker_2.push(b2);
+          details.marker_1.push(byte_1);
+          details.marker_2.push(byte_2);
         }
         details.size += 1;
-        if b1 != b2 {
+        if byte_1 != byte_2 {
           if !first_difference {
             details.first_difference_offset = details.size;
-            details.first_difference_byte_1 = Some(b1);
-            details.first_difference_byte_2 = Some(b2);
+            details.first_difference_byte_1 = Some(byte_1);
+            details.first_difference_byte_2 = Some(byte_2);
           }
-          details.differences.push((details.size, Some(b1), Some(b2)));
+          details.differences.push((details.size, Some(byte_1), Some(byte_2)));
           first_difference = true;
         }
       }
-      (None, Some(Ok(b2))) => {
+      (None, Some(Ok(byte_2))) => {
         details.size += 1;
         if !first_difference {
           details.first_difference_offset = details.size;
-          details.first_difference_byte_2 = Some(b2);
+          details.first_difference_byte_2 = Some(byte_2);
         }
-        details.differences.push((details.size, None, Some(b2)));
+        details.differences.push((details.size, None, Some(byte_2)));
         first_difference = true;
       }
-      (Some(Ok(b1)), None) => {
-        if !first_difference && b1 == LF {
+      (Some(Ok(byte_1)), None) => {
+        if !first_difference && byte_1 == b'\n' {
           details.first_difference_line += 1;
         }
         details.size += 1;
         if !first_difference {
           details.first_difference_offset = details.size;
-          details.first_difference_byte_1 = Some(b1);
+          details.first_difference_byte_1 = Some(byte_1);
         }
-        details.differences.push((details.size, Some(b1), None));
+        details.differences.push((details.size, Some(byte_1), None));
         first_difference = true;
       }
       (None, None) => break,
-      (v1, v2) => return ComparisonResult::Error(format!("Unexpected: {:?}, {:?}", v1, v2)),
+      (value_1, value_2) => {
+        return ComparisonResult::Error(format!("Reading bytes failed. {:?} {:?}", value_1, value_2))
+      }
     }
   }
   if options.marker != details.marker_1 {
