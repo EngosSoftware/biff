@@ -82,7 +82,7 @@ fn _0006() {
     .arg("sample2.txt")
     .assert()
     .code(1)
-    .stdout("sample1.txt sample2.txt differ: limit 0.1% exceeded by value 25.000%\n")
+    .stdout("sample1.txt sample2.txt differ: limit 0.1% exceeded by value 25.00%\n")
     .stderr("");
 }
 

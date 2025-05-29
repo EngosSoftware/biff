@@ -109,7 +109,7 @@ fn _0008() {
     .arg("file2.pdf")
     .assert()
     .code(1)
-    .stdout("file1.pdf file2.pdf differ: limit 0.01% exceeded by value 0.256%\n")
+    .stdout("file1.pdf file2.pdf differ: limit 0.01% exceeded by value 0.26%\n")
     .stderr("");
 }
 
@@ -124,7 +124,7 @@ fn _0009() {
     .arg("file2.pdf")
     .assert()
     .code(1)
-    .stdout("file1.pdf file2.pdf differ: limit 0.01% exceeded by value 0.256%\n")
+    .stdout("file1.pdf file2.pdf differ: limit 0.01% exceeded by value 0.26%\n")
     .stderr("");
 }
 

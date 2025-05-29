@@ -7,6 +7,7 @@ mod comparator;
 
 use crate::cli::{get_bytes, get_flag, get_matches, get_skip, get_str, get_value};
 use crate::comparator::{compare, ComparisonOptions, ComparisonResult};
+use std::fs::File;
 use std::process::ExitCode;
 
 const CODE_EQUAL: u8 = 0;
@@ -55,14 +56,14 @@ fn main() -> ExitCode {
   let file_name_2 = get_str(&matches, "FILE2").unwrap();
   let marker = if let Some(marker_str) = get_str(&matches, "marker") {
     match hex::decode(marker_str) {
-      Ok(marker_bytes) => marker_bytes,
+      Ok(marker_bytes) => Some(marker_bytes),
       Err(reason) => {
         eprintln!("Invalid marker. {}", reason);
         return ExitCode::from(CODE_ERROR);
       }
     }
   } else {
-    vec![]
+    None
   };
   let percentage_limit: Option<f64> = get_value(&matches, "percent");
   let absolute_limit: Option<usize> = get_value(&matches, "absolute");
@@ -77,12 +78,25 @@ fn main() -> ExitCode {
   let verbose = get_flag(&matches, "verbose");
   let quiet = get_flag(&matches, "quiet") || get_flag(&matches, "silent");
   let (skip_1, skip_2) = get_skip(&matches, "ignore-initial");
-  let max_bytes = get_bytes(&matches, "bytes", usize::MAX);
+  let max_bytes = get_bytes(&matches, "bytes");
+
+  let file_1 = match File::open(&file_name_1) {
+    Ok(file) => file,
+    Err(reason) => {
+      eprintln!("Can not open file. {:?}", reason);
+      return ExitCode::from(CODE_ERROR);
+    }
+  };
+  let file_2 = match File::open(&file_name_2) {
+    Ok(file) => file,
+    Err(reason) => {
+      eprintln!("Can not open file. {:?}", reason);
+      return ExitCode::from(CODE_ERROR);
+    }
+  };
 
   let options = ComparisonOptions {
-    file_name_1,
     skip_1,
-    file_name_2,
     skip_2,
     max_bytes,
     marker,
@@ -90,7 +104,7 @@ fn main() -> ExitCode {
     absolute_limit,
   };
 
-  match compare(&options) {
+  match compare(file_1, file_2, &options) {
     ComparisonResult::Identical => ExitCode::from(CODE_EQUAL),
     ComparisonResult::SimilarPercentage(limit, difference) => {
       let (_, _) = (limit, difference);
@@ -104,7 +118,7 @@ fn main() -> ExitCode {
       if !quiet {
         println!(
           "{} {} differ: limit {} exceeded by value {}",
-          options.file_name_1, options.file_name_2, limit, difference
+          file_name_1, file_name_2, limit, difference
         );
       }
       ExitCode::from(CODE_DIFFERENT)
@@ -112,8 +126,8 @@ fn main() -> ExitCode {
     ComparisonResult::PercentageLimitExceeded(limit, difference) => {
       if !quiet {
         println!(
-          "{} {} differ: limit {}% exceeded by value {:.03}%",
-          options.file_name_1, options.file_name_2, limit, difference
+          "{} {} differ: limit {}% exceeded by value {:.2}%",
+          file_name_1, file_name_2, limit, difference
         );
       }
       ExitCode::from(CODE_DIFFERENT)
@@ -122,7 +136,7 @@ fn main() -> ExitCode {
       if !verbose && !quiet {
         print!(
           "{} {} differ: byte {}, line {}",
-          options.file_name_1, options.file_name_2, details.first_difference_offset, details.first_difference_line
+          file_name_1, file_name_2, details.first_difference_offset, details.first_difference_line
         );
         if print_bytes {
           print!(" is ");
@@ -139,11 +153,22 @@ fn main() -> ExitCode {
       }
       ExitCode::from(CODE_DIFFERENT)
     }
-    ComparisonResult::InvalidMarker(file_name, expected, actual) => {
+    ComparisonResult::InvalidMarker1(expected, actual) => {
       if !quiet {
         println!(
           "marker not matched for file: {}, expected: {}, actual: {}",
-          file_name,
+          file_name_1,
+          hex::encode(expected),
+          hex::encode(actual)
+        );
+      }
+      ExitCode::from(CODE_INVALID_MARKER)
+    }
+    ComparisonResult::InvalidMarker2(expected, actual) => {
+      if !quiet {
+        println!(
+          "marker not matched for file: {}, expected: {}, actual: {}",
+          file_name_2,
           hex::encode(expected),
           hex::encode(actual)
         );

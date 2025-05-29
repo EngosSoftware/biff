@@ -195,86 +195,82 @@ pub fn get_flag(matches: &ArgMatches, id: &str) -> bool {
 }
 
 /// Returns matched skip bytes from command-line arguments.
-pub fn get_skip(matches: &ArgMatches, id: &str) -> (usize, usize) {
+pub fn get_skip(matches: &ArgMatches, id: &str) -> (Option<usize>, Option<usize>) {
   if let Some(s) = matches.get_one::<String>(id) {
     return if s.contains(':') {
       let mut parts = s.split(':');
-      let skip_1 = parse_bytes(parts.next().unwrap(), 0);
-      let skip_2 = parse_bytes(parts.next().unwrap(), 0);
+      let skip_1 = parse_bytes(parts.next().unwrap());
+      let skip_2 = parse_bytes(parts.next().unwrap());
       (skip_1, skip_2)
     } else {
-      let skip = parse_bytes(s, 0);
+      let skip = parse_bytes(s);
       (skip, skip)
     };
   }
-  (0, 0)
+  (None, None)
 }
 
 /// Returns matched bytes from command-line arguments.
-pub fn get_bytes(matches: &ArgMatches, id: &str, default: usize) -> usize {
-  if let Some(s) = matches.get_one::<String>(id) {
-    parse_bytes(s, default)
-  } else {
-    default
-  }
+pub fn get_bytes(matches: &ArgMatches, id: &str) -> Option<usize> {
+  matches.get_one::<String>(id).and_then(|s| parse_bytes(s))
 }
 
 /// Parses a number with suffix, returns default value when error occurs.
-fn parse_bytes(s: &str, default: usize) -> usize {
+fn parse_bytes(s: &str) -> Option<usize> {
   if let Some(prefix) = s.strip_suffix("kB") {
     if let Some(value) = multiplied(prefix, 1_000) {
-      return value;
+      return Some(value);
     }
   }
   if let Some(prefix) = s.strip_suffix('k') {
     if let Some(value) = multiplied(prefix, 1_024) {
-      return value;
+      return Some(value);
     }
   }
   if let Some(prefix) = s.strip_suffix('K') {
     if let Some(value) = multiplied(prefix, 1_024) {
-      return value;
+      return Some(value);
     }
   }
   if let Some(prefix) = s.strip_suffix("KiB") {
     if let Some(value) = multiplied(prefix, 1_024) {
-      return value;
+      return Some(value);
     }
   }
   if let Some(prefix) = s.strip_suffix("MB") {
     if let Some(value) = multiplied(prefix, 1_000_000) {
-      return value;
+      return Some(value);
     }
   }
   if let Some(prefix) = s.strip_suffix('M') {
     if let Some(value) = multiplied(prefix, 1_048_576) {
-      return value;
+      return Some(value);
     }
   }
   if let Some(prefix) = s.strip_suffix("MiB") {
     if let Some(value) = multiplied(prefix, 1_048_576) {
-      return value;
+      return Some(value);
     }
   }
   if let Some(prefix) = s.strip_suffix("GB") {
     if let Some(value) = multiplied(prefix, 1_000_000_000) {
-      return value;
+      return Some(value);
     }
   }
   if let Some(prefix) = s.strip_suffix('G') {
     if let Some(value) = multiplied(prefix, 1_073_741_824) {
-      return value;
+      return Some(value);
     }
   }
   if let Some(prefix) = s.strip_suffix("GiB") {
     if let Some(value) = multiplied(prefix, 1_073_741_824) {
-      return value;
+      return Some(value);
     }
   }
   if let Ok(value) = s.trim().parse::<usize>() {
-    return value;
+    return Some(value);
   }
-  default
+  None
 }
 
 fn multiplied(s: &str, multiplier: usize) -> Option<usize> {
