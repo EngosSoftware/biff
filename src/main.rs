@@ -96,9 +96,7 @@ fn main() -> ExitCode {
   };
 
   let options = ComparisonOptions {
-    file_name_1,
     skip_1,
-    file_name_2,
     skip_2,
     max_bytes,
     marker,
@@ -120,7 +118,7 @@ fn main() -> ExitCode {
       if !quiet {
         println!(
           "{} {} differ: limit {} exceeded by value {}",
-          options.file_name_1, options.file_name_2, limit, difference
+          file_name_1, file_name_2, limit, difference
         );
       }
       ExitCode::from(CODE_DIFFERENT)
@@ -129,7 +127,7 @@ fn main() -> ExitCode {
       if !quiet {
         println!(
           "{} {} differ: limit {}% exceeded by value {:.03}%",
-          options.file_name_1, options.file_name_2, limit, difference
+          file_name_1, file_name_2, limit, difference
         );
       }
       ExitCode::from(CODE_DIFFERENT)
@@ -138,7 +136,7 @@ fn main() -> ExitCode {
       if !verbose && !quiet {
         print!(
           "{} {} differ: byte {}, line {}",
-          options.file_name_1, options.file_name_2, details.first_difference_offset, details.first_difference_line
+          file_name_1, file_name_2, details.first_difference_offset, details.first_difference_line
         );
         if print_bytes {
           print!(" is ");
@@ -155,11 +153,22 @@ fn main() -> ExitCode {
       }
       ExitCode::from(CODE_DIFFERENT)
     }
-    ComparisonResult::InvalidMarker(file_name, expected, actual) => {
+    ComparisonResult::InvalidMarker1(expected, actual) => {
       if !quiet {
         println!(
           "marker not matched for file: {}, expected: {}, actual: {}",
-          file_name,
+          file_name_1,
+          hex::encode(expected),
+          hex::encode(actual)
+        );
+      }
+      ExitCode::from(CODE_INVALID_MARKER)
+    }
+    ComparisonResult::InvalidMarker2(expected, actual) => {
+      if !quiet {
+        println!(
+          "marker not matched for file: {}, expected: {}, actual: {}",
+          file_name_2,
           hex::encode(expected),
           hex::encode(actual)
         );

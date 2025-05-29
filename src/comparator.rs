@@ -3,41 +3,37 @@ use std::io::{BufReader, Read};
 #[derive(Debug, Default, Clone)]
 #[non_exhaustive]
 pub struct ComparisonOptions {
-  /// Name of the first file in comparison.
-  pub file_name_1: String,
-  /// Number of starting bytes to skip in the first file.
+  /// Number of starting bytes to skip in the first data stream.
   pub skip_1: usize,
-  /// Name of the second file in comparison.
-  pub file_name_2: String,
-  /// Number of starting bytes to skip in the second file.
+  /// Number of starting bytes to skip in the second data stream.
   pub skip_2: usize,
   /// Maximum number of bytes to compare.
   pub max_bytes: usize,
-  /// Expected file marker at the beginning of both files.
+  /// Expected file marker at the beginning of both data streams.
   pub marker: Vec<u8>,
-  /// Accepted percentage limit of differences between compared files.
+  /// Accepted percentage limit of differences between compared data streams.
   pub percentage_limit: Option<f64>,
-  /// Accepted absolute limit of differences between compared files.
+  /// Accepted absolute limit of differences between compared data streams.
   pub absolute_limit: Option<usize>,
 }
 
 /// Result details of file comparison.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 #[non_exhaustive]
 pub struct ComparisonDetails {
-  /// Size of the files, when files differ in sizes, the bigger file size is returned.
+  /// Size of the data, when data streams differ in sizes, the bigger size is returned.
   pub size: usize,
-  /// Header marker of the first file.
+  /// Header marker of the first data stream.
   pub marker_1: Vec<u8>,
-  /// Header marker of the second file.
+  /// Header marker of the second data stream.
   pub marker_2: Vec<u8>,
   /// Byte number of the first difference.
   pub first_difference_offset: usize,
   /// Line number of the first difference.
   pub first_difference_line: usize,
-  /// First differing byte from the first file.
+  /// First differing byte from the first data stream.
   pub first_difference_byte_1: Option<u8>,
-  /// First differing byte from the second file.
+  /// First differing byte from the second data stream.
   pub first_difference_byte_2: Option<u8>,
   /// List of different bytes with offsets.
   pub differences: Vec<(usize, Option<u8>, Option<u8>)>,
@@ -65,14 +61,15 @@ impl ComparisonDetails {
   }
 }
 
+#[derive(Debug, Clone, PartialEq)]
 pub enum ComparisonResult {
-  /// Compared files are identical.
+  /// Compared data streams are identical.
   Identical,
-  /// Compared files are similar, differences are under specified percentage limit.
+  /// Compared data streams are similar, differences are under specified percentage limit.
   SimilarPercentage(f64, f64),
-  /// Compared files are similar, differences are under specified absolute limit.
+  /// Compared data streams are similar, differences are under specified absolute limit.
   SimilarAbsolute(usize, usize),
-  /// Compared files are different.
+  /// Compared data streams are different.
   Different(ComparisonDetails),
   /// Percentage limit of differences was exceeded,
   /// contains the limit (first field) and actual difference (second field).
@@ -80,9 +77,11 @@ pub enum ComparisonResult {
   /// Absolute limit of differences was exceeded,
   /// contains the limit (first field) and actual difference (second field).
   AbsoluteLimitExceeded(usize, usize),
-  /// File has and invalid marker.
-  InvalidMarker(String, Vec<u8>, Vec<u8>),
-  /// Comparison process ended with an error.
+  /// Invalid marker in the first data stream.
+  InvalidMarker1(Vec<u8>, Vec<u8>),
+  /// Invalid marker in the second data stream.
+  InvalidMarker2(Vec<u8>, Vec<u8>),
+  /// Comparison process ended with an unexpected error.
   Error(String),
 }
 
@@ -143,18 +142,10 @@ pub fn compare(reader_1: impl Read, reader_2: impl Read, options: &ComparisonOpt
     }
   }
   if options.marker != details.marker_1 {
-    return ComparisonResult::InvalidMarker(
-      options.file_name_1.clone(),
-      options.marker.clone(),
-      details.marker_1.clone(),
-    );
+    return ComparisonResult::InvalidMarker1(options.marker.clone(), details.marker_1.clone());
   }
   if options.marker != details.marker_2 {
-    return ComparisonResult::InvalidMarker(
-      options.file_name_2.clone(),
-      options.marker.clone(),
-      details.marker_2.clone(),
-    );
+    return ComparisonResult::InvalidMarker2(options.marker.clone(), details.marker_2.clone());
   }
   let absolute_difference = details.differences.len();
   if let Some(limit) = options.percentage_limit {

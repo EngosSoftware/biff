@@ -5,6 +5,7 @@ mod files_are_equal;
 mod files_are_similar;
 mod files_differ;
 mod invalid_cli_commands;
+mod library;
 mod no_cli_arguments_passed;
 mod quiet_option;
 mod read_error;
