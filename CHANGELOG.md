@@ -3,8 +3,7 @@
 ## [v0.2.1] - 2025-11-27
 
 ### Changed
-- Replaced `assert_cli` with [`cli-assert`](https://crates.io/crates/cli-assert)
-  for testing command-line interface.
+- Replaced `assert_cli` with [`cli-assert`](https://crates.io/crates/cli-assert) for testing command-line interface.
 
 ## [v0.1.8] - 2024-11-08
 
