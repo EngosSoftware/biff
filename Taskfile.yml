@@ -7,7 +7,7 @@ tasks:
   build:
     desc: Builds in debug mode
     cmds:
-      - cmd: cargo +stable build
+      - cmd: cargo build
 
   clean:
     desc: Cleans all targets
@@ -17,42 +17,42 @@ tasks:
   clippy:
     desc: Runs clippy for all targets
     cmds:
-      - cmd: cargo +stable clippy --all-targets
+      - cmd: cargo clippy --all-targets
 
   cov:
     desc: Generates the code coverage report in text format printed to stdout
     cmds:
-      - cmd: cargo +stable llvm-cov clean
-      - cmd: cargo +stable llvm-cov --no-cfg-coverage
+      - cmd: cargo llvm-cov clean
+      - cmd: cargo llvm-cov --no-cfg-coverage
 
   cov-html:
     desc: Generates the code coverage report in HTML format and opens it in a browser
     cmds:
-      - cmd: cargo +stable llvm-cov clean
-      - cmd: cargo +stable llvm-cov --no-cfg-coverage --html --open
+      - cmd: cargo llvm-cov clean
+      - cmd: cargo llvm-cov --no-cfg-coverage --html --open
 
   cov-summary:
     desc: Generates the code coverage summary report in JSON format
     cmds:
-      - cmd: cargo +stable llvm-cov clean
-      - cmd: cargo +stable llvm-cov --no-cfg-coverage --json --summary-only | jq
+      - cmd: cargo llvm-cov clean
+      - cmd: cargo llvm-cov --no-cfg-coverage --json --summary-only | jq
 
   cov-badge:
     desc: Generates the code coverage badge
     cmds:
-      - cmd: cargo +stable build
-      - cmd: cargo +stable llvm-cov clean
-      - cmd: cargo +stable llvm-cov --no-cfg-coverage --json --summary-only | coverio --collapse --tag cov-badge-coverio
+      - cmd: cargo build
+      - cmd: cargo llvm-cov clean
+      - cmd: cargo llvm-cov --no-cfg-coverage --json --summary-only | coverio --collapse --tag cov-badge-coverio
 
   doc:
     desc: Generates documentation
     cmds:
-      - cmd: cargo +stable doc --no-deps
+      - cmd: cargo doc --no-deps
 
   doc-open:
     desc: Generates documentation and opens it in browser
     cmds:
-      - cmd: cargo +stable doc --no-deps --open
+      - cmd: cargo doc --no-deps --open
 
   fmt:
     desc: Runs code formatter
@@ -62,24 +62,24 @@ tasks:
   help:
     desc: Runs short help option
     cmds:
-      - cmd: cargo +stable run -- -h
+      - cmd: cargo run -- -h
 
   help-long:
     desc: Runs long help option
     cmds:
-      - cmd: cargo +stable run -- --help
+      - cmd: cargo run -- --help
 
   install:
     desc: Builds and installs release version
     cmds:
-      - cmd: cargo +stable install biff --path=. --force
+      - cmd: cargo install biff --path=. --force
 
   test:
     desc: Runs tests in debug mode
     cmds:
-      - cmd: cargo +stable test
+      - cmd: cargo test
 
   testn:
     desc: Runs tests in debug mode
     cmds:
-      - cmd: cargo +stable nextest run
+      - cmd: cargo nextest run
