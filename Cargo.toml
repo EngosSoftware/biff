@@ -1,6 +1,6 @@
 [package]
 name = "biff"
-version = "0.2.1"
+version = "0.2.2"
 authors = ["Dariusz Depta <depta@engos.de>"]
 description = "Byte by byte file comparator"
 documentation = "https://docs.rs/biff"
