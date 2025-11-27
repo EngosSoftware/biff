@@ -9,7 +9,7 @@
 [![MIT][mit-badge]][mit-url]
 [![Apache][apache-badge]][apache-url]
 [![cc][cc-badge]][cc-url]
-[![Made by Human][mbh-badge]][mbh-url]
+[![mbh][mbh-badge]][mbh-url]
 
 [crates-badge]: https://img.shields.io/crates/v/biff.svg
 [crates-url]: https://crates.io/crates/biff
