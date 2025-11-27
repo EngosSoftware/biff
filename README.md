@@ -30,7 +30,8 @@
 [mbh-badge]: https://img.shields.io/badge/Made_by-HUMAN-c51162.svg
 [mbh-url]: https://github.com/DariuszDepta
 [github-url]: https://github.com/EngosSoftware/biff
-[Engos Software]: https://engos.de
+[es-badge]: https://img.shields.io/badge/Brought_to_you_by-Engos_Software-336600.svg 
+[es-url]: https://engos.de
 
 ## Overview
 
@@ -186,6 +187,4 @@ Any contributions to [**biff**][github-url] are greatly appreciated.
 All contributions intentionally submitted for inclusion in the work by you,
 shall be dual licensed as above, without any additional terms or conditions.
 
----
-
-Brought to you by [Engos Software]
+[![Engos Software][es-badge]][es-url]
