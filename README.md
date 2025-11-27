@@ -33,26 +33,26 @@
 [es-badge]: https://img.shields.io/badge/Brought_to_you_by-Engos_Software-336600.svg 
 [es-url]: https://engos.de
 
-## Overview
+**Byte by byte file comparator**
 
-Compare two files byte by byte.
+## Overview
 
 **biff** compares two files byte by byte, and if they differ, tells the first byte and line number where they differ.
 Additionally, when option `-l` or `--verbose` is set, **biff** will display all differing bytes.
 
 **biff** may also skip some initial bytes in compared files or compare only up to requested number of bytes.
 
-When comparing binary files, **biff** may check the beginning bytes if they match the specified _marker_, so only
-files having such marker will be compared.
+When comparing binary files, **biff** may check the beginning bytes if they match the specified **_marker_**,
+so only files having such marker will be compared.
 
 There are also some popular cases, when compared files differ only in few bytes, but generally may be considered
-as _similar_ and this is quite alright. For such comparisons **biff** may use the absolute total number of acceptable
-differences (option `-a` or `--absolute`) or percentage difference limit (option `-p` or `--percent`).
+as **_similar_** and this is quite alright. For such comparisons **biff** may use the absolute total number
+of acceptable differences (option `-a` or `--absolute`) or a percentage difference limit (option `-p` or `--percent`).
 
-The most popular use case of such _similarity comparisons_ are PDF files generated 
-from the same HTML files using Headless Chrome. 
+The most popular use case of such **_similarity comparisons_** are PDF files generated from the same HTML files
+using for example [**htop**](https://crates.io/crates/htop). 
 
-The best fit for **biff** are test cases with output values being files.  
+The best fit for **biff** are test cases with output values being binary files.  
 
 ## Installation
 
@@ -76,7 +76,6 @@ $ biff --help
 
 ## Examples
 
-<!--- see: bbt/tests/examples_in_readme/EXAMPLE_1 -->
 ### Files are equal
 
 ```shell
@@ -90,7 +89,6 @@ $ echo $?
 0
 ```
 
-<!--- see: bbt/tests/examples_in_readme/EXAMPLE_2 -->
 ### Files are equal but starting from the 3rd byte
 
 ```shell
@@ -104,7 +102,6 @@ $ echo $?
 0
 ```
 
-<!--- see: bbt/tests/examples_in_readme/EXAMPLE_3 -->
 ### Files are similar (difference limits)
 
 ```shell
@@ -126,7 +123,6 @@ $ echo $?
 0
 ```
 
-<!--- see: bbt/tests/examples_in_readme/EXAMPLE_4 -->
 ### Files differ
 
 ```shell
