@@ -1,6 +1,6 @@
 # biff
 
-[![Crates.io][crates-badge]][crates-url]
+[![crates.io][crates-badge]][crates-url]
 ![Code coverage][coverage-badge]
 ![build Linux][build-badge-linux]
 ![build Windows][build-badge-windows]
@@ -8,8 +8,8 @@
 ![build MacOs arm64][build-badge-macos-arm64]
 [![MIT licensed][mit-badge]][mit-url]
 [![Apache 2.0 licensed][apache-badge]][apache-url]
-[![Contributor Covenant][cc-badge]][cc-url]
-[![Made by Human][mbh-badge]][cc-url]
+[![cc][cc-badge]][cc-url]
+[![Made by Human][mbh-badge]][mbh-url]
 
 [crates-badge]: https://img.shields.io/crates/v/biff.svg
 [crates-url]: https://crates.io/crates/biff
@@ -28,7 +28,8 @@
 [cc-badge]: https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg
 [cc-url]: https://github.com/EngosSoftware/biff/blob/main/CODE_OF_CONDUCT.md
 [mbh-badge]: https://img.shields.io/badge/Made_by-HUMAN-c51162.svg
-[repository-url]: https://github.com/EngosSoftware/biff
+[mbh-url]: https://github.com/DariuszDepta
+[github-url]: https://github.com/EngosSoftware/biff
 [Engos Software]: https://engos.de
 
 ## Overview
@@ -181,7 +182,7 @@ at your option.
 
 ## Contribution
 
-Any contributions to [**biff**][repository-url] are greatly appreciated.
+Any contributions to [**biff**][github-url] are greatly appreciated.
 All contributions intentionally submitted for inclusion in the work by you,
 shall be dual licensed as above, without any additional terms or conditions.
 
