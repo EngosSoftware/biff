@@ -1,13 +1,7 @@
-use super::*;
-use assert_cmd::Command;
-
 #[cfg(not(target_os = "windows"))]
 #[test]
 fn _0001() {
-  let mut cmd = Command::cargo_bin("biff").unwrap();
-  cmd
-    .current_dir(current_dir(file!()))
-    .assert()
+  cli_assert::command!()
     .code(2)
     .stdout("")
     .stderr(
@@ -19,16 +13,14 @@ Usage: biff <FILE1> <FILE2>
 
 For more information, try '--help'.
 "#,
-    );
+    )
+    .execute();
 }
 
 #[cfg(target_os = "windows")]
 #[test]
 fn _0002() {
-  let mut cmd = Command::cargo_bin("biff").unwrap();
-  cmd
-    .current_dir(current_dir(file!()))
-    .assert()
+  cli_assert::command!()
     .code(2)
     .stdout("")
     .stderr(
@@ -40,5 +32,6 @@ Usage: biff.exe <FILE1> <FILE2>
 
 For more information, try '--help'.
 "#,
-    );
+    )
+    .execute();
 }

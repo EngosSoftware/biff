@@ -17,8 +17,8 @@ exclude = [
 ]
 
 [dependencies]
-clap = { version = "4.5.38", features = ["cargo"] }
+clap = { version = "4.5.53", features = ["cargo"] }
 hex = "0.4.3"
 
 [dev-dependencies]
-assert_cmd = "2.0.17"
+cli-assert = "0.1.0"
