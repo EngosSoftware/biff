@@ -1,7 +1,7 @@
 # biff
 
 [![crates.io][crates-badge]][crates-url]
-![coverage][coverage-badge]
+[![coverage][cov-badge-coverio]][cov-url]
 ![Linux][build-badge-linux]
 ![Windows][build-badge-windows]
 ![macOs][build-badge-macos]
@@ -24,7 +24,8 @@
 [build-badge-windows]: https://github.com/EngosSoftware/biff/actions/workflows/build-windows.yml/badge.svg
 [build-badge-macos]: https://github.com/EngosSoftware/biff/actions/workflows/build-macos.yml/badge.svg
 [build-badge-macos-arm64]: https://github.com/EngosSoftware/biff/actions/workflows/build-macos-arm64.yml/badge.svg
-[coverage-badge]: https://img.shields.io/badge/Code%20coverage-100%25-green.svg
+[cov-badge-coverio]: https://img.shields.io/badge/cov-100%25-21b577.svg
+[cov-url]: https://crates.io/crates/coverio
 [cc-badge]: https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg
 [cc-url]: https://github.com/EngosSoftware/biff/blob/main/CODE_OF_CONDUCT.md
 [mbh-badge]: https://img.shields.io/badge/Made_by-HUMAN-c51162.svg
