@@ -44,7 +44,7 @@ tasks:
   fmt:
     desc: Runs code formatter
     cmds:
-      - cmd: cargo +nightly fmt
+      - cmd: cargo fmt
 
   help:
     desc: Runs short help option

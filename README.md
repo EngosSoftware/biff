@@ -1,13 +1,13 @@
 # biff
 
 [![crates.io][crates-badge]][crates-url]
-![Code coverage][coverage-badge]
-![build Linux][build-badge-linux]
-![build Windows][build-badge-windows]
-![build MacOs][build-badge-macos]
-![build MacOs arm64][build-badge-macos-arm64]
-[![MIT licensed][mit-badge]][mit-url]
-[![Apache 2.0 licensed][apache-badge]][apache-url]
+![coverage][coverage-badge]
+![Linux][build-badge-linux]
+![Windows][build-badge-windows]
+![macOs][build-badge-macos]
+![macOs arm64][build-badge-macos-arm64]
+[![MIT][mit-badge]][mit-url]
+[![Apache][apache-badge]][apache-url]
 [![cc][cc-badge]][cc-url]
 [![Made by Human][mbh-badge]][mbh-url]
 

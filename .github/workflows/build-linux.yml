@@ -1,21 +1,16 @@
-# Linux Musl x86_64
-
 name: Linux
 
 on:
   push:
     branches:
       - main
-      - releases/**
-
-env:
-  CARGO_TERM_COLOR: always
+      - release/**
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: dtolnay/rust-toolchain@stable
-      - run: cargo +stable build --release
-      - run: cargo +stable test
+      - run: cargo test
+      - run: cargo build --release
