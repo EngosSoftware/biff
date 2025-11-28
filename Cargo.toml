@@ -1,6 +1,6 @@
 [package]
 name = "biff"
-version = "0.2.4"
+version = "0.2.5"
 authors = ["Dariusz Depta <depta@engos.de>"]
 description = "Byte by byte file comparator"
 documentation = "https://docs.rs/biff"
@@ -21,4 +21,4 @@ clap = { version = "4.5.53", features = ["cargo"] }
 hex = "0.4.3"
 
 [dev-dependencies]
-cli-assert = "0.1.0"
+cli-assert = "0.1.8"
